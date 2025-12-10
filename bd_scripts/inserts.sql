@@ -161,6 +161,8 @@ VALUES ('maria@ucab.edu.ve', 'google@empresa.com', 'SRE Engineer');
 INSERT INTO Etiqueta (correo_publicador, nombre_cargo, nombre_carrera) 
 VALUES ('google@empresa.com', 'SRE Engineer', 'Ingeniería Informática');
 
+
+-- Relaciones Sociales (Miguel)
 -- Es_Amigo
 INSERT INTO Es_Amigo (correo_persona1, correo_persona2, estado) VALUES
 ('miguel@ucab.edu.ve', 'maria@ucab.edu.ve', 'aceptada');
