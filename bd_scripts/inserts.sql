@@ -62,7 +62,7 @@ INSERT INTO Periodo (id_periodo, correo_persona, fecha_inicio, fecha_fin, descri
 ('2022-02-15 08:00:00', 'miguel@ucab.edu.ve', '2022-02-15', '2022-07-15', 'Preparaduría de Programación'),
 ('2023-03-01 10:00:00', 'miguel@ucab.edu.ve', '2023-03-01', '2023-06-01', 'Curso de Liderazgo Estudiantil'),
 ('2024-02-01 11:30:00', 'miguel@ucab.edu.ve', '2024-02-01', NULL, 'Freelance Junior Developer'),
-('2025-09-15 18:00:00', 'miguel@ucab.edu.ve', '2025-09-15', NULL, 'Inicio de Especialización')
+('2025-09-15 18:00:00', 'miguel@ucab.edu.ve', '2025-09-15', NULL, 'Inicio de Especialización');
 
 -- (Para usuario maria)
 INSERT INTO Periodo (id_periodo, correo_persona, fecha_inicio, fecha_fin, descripcion_periodo) VALUES
@@ -78,7 +78,7 @@ INSERT INTO Periodo (id_periodo, correo_persona, fecha_inicio, fecha_fin, descri
 INSERT INTO Periodo_Educativo (id_periodo, correo_persona, id_carrera, nombre_estudio) VALUES
 ('2021-09-15 08:30:00', 'miguel@ucab.edu.ve', 'Ingeniería Informática', NULL),
 ('2023-03-01 10:00:00', 'miguel@ucab.edu.ve', NULL, 'Diplomado en Liderazgo'),
-('2025-09-15 18:00:00', 'miguel@ucab.edu.ve', 'Especialización en Ing. de Software', NULL);
+('2025-09-15 18:00:00', 'miguel@ucab.edu.ve', 'Maestría en Ingeniería Informática', NULL);
 
 -- Maria
 INSERT INTO Periodo_Educativo (id_periodo, correo_persona, id_carrera, nombre_estudio) VALUES
@@ -161,6 +161,9 @@ VALUES ('maria@ucab.edu.ve', 'google@empresa.com', 'SRE Engineer');
 INSERT INTO Etiqueta (correo_publicador, nombre_cargo, nombre_carrera) 
 VALUES ('google@empresa.com', 'SRE Engineer', 'Ingeniería Informática');
 
+
+-- Entidades Sociales
+
 -- Es_Amigo
 INSERT INTO Es_Amigo (correo_persona1, correo_persona2, estado) VALUES
 ('miguel@ucab.edu.ve', 'maria@ucab.edu.ve', 'aceptada');
@@ -227,7 +230,6 @@ INSERT INTO Opcion (id_publicacion, correo_autor, texto_opcion, total_votos) VAL
 -- Voto
 INSERT INTO Vota (correo_miembro, id_publicacion, correo_autor_encuesta, texto_opcion) VALUES
 ('miguel@ucab.edu.ve', '2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial');
-
 
 
 -- Eventos
