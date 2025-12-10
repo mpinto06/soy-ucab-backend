@@ -221,7 +221,7 @@ CREATE TABLE Es_Amigo (
     fecha_solicitud DATE DEFAULT CURRENT_DATE,
     PRIMARY KEY (correo_persona1, correo_persona2),
     FOREIGN KEY (correo_persona1) REFERENCES Persona(correo_electronico),
-    FOREIGN KEY (correo_persona2) REFERENCES Persona(correo_electronico)
+    FOREIGN KEY (correo_persona2) REFERENCES Persona(correo_electronico),
 );
 
 --FINO
