@@ -363,22 +363,26 @@ CREATE TABLE Encuesta (
 
 --FINO
 CREATE TABLE Opcion (
-    id_encuesta INTEGER NOT NULL,
-    texto_opcion VARCHAR(100) NOT NULL,
+    id_publicacion VARCHAR(50), 
+    correo_autor VARCHAR(255),
+    texto_opcion VARCHAR(100),
     total_votos INTEGER DEFAULT 0,
-    PRIMARY KEY (id_encuesta, texto_opcion),
-    FOREIGN KEY (id_encuesta) REFERENCES Encuesta(id_encuesta)
+    PRIMARY KEY (id_publicacion, correo_autor, texto_opcion),
+    FOREIGN KEY (id_publicacion, correo_autor) REFERENCES Encuesta(id_publicacion, correo_autor)
 );
 
 --FINO
 --SE QUITA ID DE ENCUESTA PQ ES SUFICIENTE CON OPCION, MODIFICAR EN ENTREGA 2
 CREATE TABLE Vota (
     correo_miembro VARCHAR(255),
-    id_opcion INTEGER,
+    id_publicacion VARCHAR(50),
+    correo_autor_encuesta VARCHAR(255),
+    texto_opcion VARCHAR(100),
     fecha_voto TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (correo_miembro, id_opcion),
+    PRIMARY KEY (correo_miembro, id_publicacion, correo_autor_encuesta, texto_opcion),
     FOREIGN KEY (correo_miembro) REFERENCES Miembro(correo_electronico),
-    FOREIGN KEY (id_opcion) REFERENCES Opcion(id_opcion)
+    FOREIGN KEY (id_publicacion, correo_autor_encuesta, texto_opcion) 
+    REFERENCES Opcion(id_publicacion, correo_autor, texto_opcion)
 );
 
 --FINO
