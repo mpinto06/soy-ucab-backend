@@ -1,3 +1,36 @@
+-- CREACIÓN DE ROLES
+CREATE ROLE arquitecto_db WITH LOGIN PASSWORD 'admin_seguro_123' CREATEDB BYPASSRLS;
+CREATE ROLE app_backend WITH LOGIN PASSWORD 'desarrollador_123';
+CREATE ROLE auditor_externo WITH LOGIN PASSWORD 'invitado_789';
+
+-- PERMISOS GLOBALES
+GRANT ALL PRIVILEGES ON DATABASE "soyucab" TO arquitecto_db;
+GRANT CONNECT ON DATABASE "soyucab" TO app_backend;
+GRANT CONNECT ON DATABASE "soyucab" TO auditor_externo;
+
+-- Para el Backend (Desarrollador)
+ALTER DEFAULT PRIVILEGES IN SCHEMA public 
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_backend;
+
+-- Para el Auditor
+ALTER DEFAULT PRIVILEGES IN SCHEMA public 
+GRANT SELECT ON TABLES TO auditor_externo;
+
+-- Para el Arquitecto (Asegurar control total sobre tablas creadas por otros)
+ALTER DEFAULT PRIVILEGES IN SCHEMA public 
+GRANT ALL ON TABLES TO arquitecto_db;
+
+-- 4. LA FUNCIÓN DE SEGURIDAD (Se puede crear antes de las tablas)
+CREATE OR REPLACE FUNCTION get_current_user_email() RETURNS VARCHAR AS $$
+BEGIN
+    RETURN current_setting('app.current_email', true);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+SET LOCAL app.current_email = 'miguel@correo.com';
+
+
+
 CREATE TYPE privacidad_msg AS ENUM ('cualquiera', 'solo_amigos', 'nadie');
 CREATE TYPE tipo_sexo AS ENUM ('M', 'F');
 CREATE TYPE nivel_carrera AS ENUM ('pregrado', 'posgrado');
@@ -5,6 +38,7 @@ CREATE TYPE tipo_entidad AS ENUM ('facultad', 'escuela', 'libre');
 CREATE TYPE extension_imagen AS ENUM ('jpg', 'jpeg', 'png');
 CREATE TYPE extension_certificado AS ENUM ('jpg', 'jpeg', 'png', 'pdf');
 CREATE TYPE extension_carta AS ENUM ('doc', 'docx', 'pdf');
+CREATE TYPE rol_sistema AS ENUM ('superadmin', 'moderador', 'usuario_estandar');
 
 -- FINO
 CREATE TABLE Miembro (
@@ -14,6 +48,7 @@ CREATE TABLE Miembro (
     archivo_foto BYTEA,
     formato_foto extension_imagen,
     nombre_archivo_foto VARCHAR(50),
+    rol_acceso rol_sistema DEFAULT 'usuario_estandar' NOT NULL,
     privacidad_mensajes privacidad_msg DEFAULT 'cualquiera',
     notif_publicaciones BOOLEAN DEFAULT TRUE,
     notif_eventos BOOLEAN DEFAULT TRUE,
@@ -181,6 +216,7 @@ CREATE TABLE Aplica (
     correo_publicador VARCHAR(255),
     nombre_cargo VARCHAR(255),
     nombre_archivo VARCHAR(50),
+    fecha_aplicacion DATE DEFAULT CURRENT_DATE,
     archivo_cv BYTEA,
     texto_aplicante TEXT,
     PRIMARY KEY (correo_aplicante, correo_publicador, nombre_cargo),
@@ -421,4 +457,66 @@ CREATE TABLE Muestra_Interes (
     PRIMARY KEY (correo_miembro, nombre_evento),
     FOREIGN KEY (correo_miembro) REFERENCES Miembro(correo_electronico),
     FOREIGN KEY (nombre_evento) REFERENCES Evento(nombre_evento)
+);
+
+
+ALTER TABLE Miembro ENABLE ROW LEVEL SECURITY;
+ALTER TABLE Mensaje ENABLE ROW LEVEL SECURITY;
+ALTER TABLE Publicacion ENABLE ROW LEVEL SECURITY;
+ALTER TABLE Grupo ENABLE ROW LEVEL SECURITY;
+
+-- Lectura: Pública
+CREATE POLICY "Ver perfiles" ON Miembro FOR SELECT
+USING (true);
+
+-- Solo el propio usuario o el administrador
+CREATE POLICY "Editar propio perfil" ON Miembro FOR UPDATE
+USING (
+    correo_electronico = get_current_user_email() 
+    OR 
+    EXISTS (SELECT 1 FROM Miembro WHERE correo_electronico = get_current_user_email() AND rol_acceso = 'superadmin')
+);
+
+-- Solo emisor o receptor pueden ver los mensajes
+CREATE POLICY "Privacidad de mensajes" ON Mensaje
+USING (
+    correo_emisor = get_current_user_email() 
+    OR 
+    correo_receptor = get_current_user_email()
+);
+
+-- Lectura: Todos pueden leer publicaciones que no pertenecen a un grupo
+CREATE POLICY "Leer publicaciones" ON Publicacion FOR SELECT
+USING (
+    id_grupo IS NULL
+    OR
+    EXISTS (
+        SELECT 1 FROM Pertenece 
+        WHERE Pertenece.nombre_grupo = Publicacion.id_grupo 
+        AND Pertenece.correo_miembro = get_current_user_email()
+    )   
+    OR 
+    EXISTS (
+        SELECT 1 FROM Grupo
+        WHERE Grupo.nombre_grupo = Publicacion.id_grupo
+        AND Grupo.tipo_grupo = 'Publico'
+    )
+    OR 
+    EXISTS (SELECT 1 FROM Miembro WHERE correo_electronico = get_current_user_email() AND rol_acceso = 'superadmin')
+);
+
+-- Insertar: Cualquier usuario registrado
+CREATE POLICY "Crear publicacion" ON Publicacion FOR INSERT 
+WITH CHECK (correo_autor = get_current_user_email());
+
+-- Borrar/Editar: El dueño de la publicación O un Moderador/Superadmin del sistema
+CREATE POLICY "Modificar publicacion" ON Publicacion FOR DELETE
+USING (
+    correo_autor = get_current_user_email()
+    OR
+    EXISTS (
+        SELECT 1 FROM Miembro 
+        WHERE correo_electronico = get_current_user_email() 
+        AND rol_acceso IN ('superadmin', 'moderador')
+    )
 );

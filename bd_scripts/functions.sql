@@ -103,39 +103,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE;
 
--- (Necesito esta función para el reporte de Detalle de Miembro)
-CREATE OR REPLACE FUNCTION calcular_meses_periodo(
-    p_id_periodo VARCHAR, 
-    p_correo_persona VARCHAR
-)
-RETURNS INTEGER AS $$
-DECLARE
-    v_fecha_inicio DATE;
-    v_fecha_fin DATE;
-    v_fecha_calculo DATE;
-BEGIN
-    -- Buscamos las fechas del periodo especificado
-    SELECT fecha_inicio, fecha_fin 
-    INTO v_fecha_inicio, v_fecha_fin
-    FROM Periodo
-    WHERE id_periodo = p_id_periodo AND correo_persona = p_correo_persona;
-
-    -- Validación: Si no encuentra el registro, retornamos NULL
-    IF NOT FOUND THEN
-        RETURN NULL;
-    END IF;
-
-    -- Si fecha_fin es NULL, usamos la fecha de hoy (CURRENT_DATE)
-    -- Si tiene fecha, usamos esa.
-    v_fecha_calculo := COALESCE(v_fecha_fin, CURRENT_DATE);
-
-    -- Cálculo matemático (Años * 12 + Meses) usando la función age()
-    RETURN (EXTRACT(YEAR FROM age(v_fecha_calculo, v_fecha_inicio)) * 12) + 
-           EXTRACT(MONTH FROM age(v_fecha_calculo, v_fecha_inicio));
-END;
-$$ LANGUAGE plpgsql;
-
-
 -- TRIGGERS
 --Actualiza el contador de likes de una publicación
 CREATE OR REPLACE FUNCTION actualizar_contador_likes()
