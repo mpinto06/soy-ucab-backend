@@ -178,6 +178,7 @@ CREATE TABLE Aplica (
     correo_aplicante VARCHAR(255),
     correo_publicador VARCHAR(255),
     nombre_cargo VARCHAR(255),
+    fecha_aplicacion DATE DEFAULT CURRENT_DATE,
     nombre_archivo VARCHAR(50),
     archivo_cv BYTEA,
     texto_aplicante TEXT,
@@ -185,6 +186,7 @@ CREATE TABLE Aplica (
     FOREIGN KEY (correo_aplicante) REFERENCES Persona(correo_electronico),
     FOREIGN KEY (correo_publicador, nombre_cargo) REFERENCES Oferta_Trabajo(correo_publicador, nombre_cargo)
 );
+
 --FINO
 CREATE TABLE Guarda (
     correo_persona VARCHAR(255),
@@ -417,3 +419,4 @@ CREATE TABLE Muestra_Interes (
     FOREIGN KEY (correo_miembro) REFERENCES Miembro(correo_electronico),
     FOREIGN KEY (nombre_evento) REFERENCES Evento(nombre_evento)
 );
+
