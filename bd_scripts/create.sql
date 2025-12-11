@@ -2,7 +2,9 @@ CREATE TYPE privacidad_msg AS ENUM ('cualquiera', 'solo_amigos', 'nadie');
 CREATE TYPE tipo_sexo AS ENUM ('M', 'F');
 CREATE TYPE nivel_carrera AS ENUM ('pregrado', 'posgrado');
 CREATE TYPE tipo_entidad AS ENUM ('facultad', 'escuela', 'libre');
-
+CREATE TYPE extension_imagen AS ENUM ('jpg', 'jpeg', 'png');
+CREATE TYPE extension_certificado AS ENUM ('jpg', 'jpeg', 'png', 'pdf');
+CREATE TYPE extension_carta AS ENUM ('doc', 'docx', 'pdf');
 
 -- FINO
 CREATE TABLE Miembro (
@@ -10,7 +12,7 @@ CREATE TABLE Miembro (
     hash_contrasena VARCHAR(255) NOT NULL,
     encabezado_perfil VARCHAR(255),
     archivo_foto BYTEA,
-    formato_foto VARCHAR(10),
+    formato_foto extension_imagen,
     nombre_archivo_foto VARCHAR(50),
     privacidad_mensajes privacidad_msg DEFAULT 'cualquiera',
     notif_publicaciones BOOLEAN DEFAULT TRUE,
@@ -109,7 +111,7 @@ CREATE TABLE Periodo_Educativo (
     correo_persona VARCHAR(255),
     id_carrera VARCHAR(255),
     archivo_certificado BYTEA,
-    formato_archivo VARCHAR(10),
+    formato_archivo extension_carta,
     nombre_estudio VARCHAR(255),
     PRIMARY KEY (id_periodo, correo_persona),
     FOREIGN KEY (id_periodo, correo_persona) REFERENCES Periodo(id_periodo, correo_persona),
@@ -124,7 +126,7 @@ CREATE TABLE Periodo_Experiencia (
     tipo_cargo tipo_cargo_exp NOT NULL,
     cargo VARCHAR(255) NOT NULL,
     archivo_carta BYTEA,
-    formato_archivo VARCHAR(10),
+    formato_archivo extension_certificado,
     PRIMARY KEY (id_periodo, correo_persona),
     FOREIGN KEY (id_periodo, correo_persona) REFERENCES Periodo(id_periodo, correo_persona),
     FOREIGN KEY (correo_organizacion) REFERENCES Organizacion(correo_electronico)
@@ -206,12 +208,15 @@ CREATE TABLE Etiqueta (
 );
 
 
+-- Entidades Sociales (Miguel)
 CREATE TYPE estado_amistad AS ENUM ('pendiente', 'aceptada', 'rechazada');
 CREATE TYPE rol_grupo AS ENUM ('administrador', 'moderador', 'participante');
 CREATE TYPE tipo_grupo AS ENUM ('Publico', 'Privado', 'Secreto');
 CREATE TYPE estado_msg AS ENUM ('no_recibido', 'leido', 'recibido');
 CREATE TYPE modalidad_evento AS ENUM ('virtual', 'presencial');
 CREATE TYPE estado_evento AS ENUM ('borrador', 'publicado', 'en curso', 'finalizado', 'archivado');
+CREATE TYPE extension_multimedia AS ENUM ('mp4', 'jpeg', 'jpg', 'png', 'pdf');
+CREATE TYPE extension_publicacion AS ENUM ('mp4', 'jpeg', 'jpg', 'png');
 
 --FINO
 CREATE TABLE Es_Amigo (
@@ -284,7 +289,7 @@ CREATE TABLE Archivo_Publicacion (
     id_publicacion VARCHAR(50),
     correo_autor VARCHAR(255),
     nombre_archivo VARCHAR(50),
-    formato_archivo VARCHAR(10),
+    formato_archivo extension_publicacion,
     archivo BYTEA,
     PRIMARY KEY (id_publicacion, correo_autor, nombre_archivo, formato_archivo),
     FOREIGN KEY (id_publicacion, correo_autor) REFERENCES Publicacion(id_publicacion, correo_autor)
@@ -346,7 +351,7 @@ CREATE TABLE Archivo_Mensaje (
     correo_receptor VARCHAR(255),
     nombre_archivo VARCHAR(255),
     archivo BYTEA,
-    formato VARCHAR(10),
+    formato extension_multimedia,
     PRIMARY KEY (nombre_archivo, id_mensaje, correo_emisor, correo_receptor, formato),
     FOREIGN KEY (id_mensaje, correo_emisor, correo_receptor) 
     REFERENCES Mensaje(id_mensaje, correo_emisor, correo_receptor)
