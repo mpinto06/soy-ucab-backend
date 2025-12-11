@@ -45,4 +45,20 @@ public class ReportController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/people-from-org")
+    public ResponseEntity<byte[]> generatePeopleFromOrg2(@RequestBody String orgEmail) {
+        try {
+            byte[] reportData = reportService.generatePeopleFromOrg2(orgEmail);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=people_from_org.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(reportData);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
