@@ -240,8 +240,8 @@ CALL registrar_voto_encuesta(
 
 
 -- Eventos
-INSERT INTO Evento (nombre_evento, correo_organizador, descripcion, modalidad, estado_evento) VALUES
-('Hackathon 2025', 'informatica@ucab.edu.ve', 'Competencia de prog', 'presencial', 'publicado');
+INSERT INTO Evento (nombre_evento, correo_organizador, descripcion, modalidad, estado_evento, ubicacion) VALUES
+('Hackathon 2025', 'informatica@ucab.edu.ve', 'Competencia de prog', 'presencial', 'publicado', 'Caracas');
 
 -- Asiste
 INSERT INTO Asiste (correo_miembro, nombre_evento) VALUES
