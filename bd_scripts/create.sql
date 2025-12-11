@@ -16,20 +16,16 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_backend;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public 
 GRANT SELECT ON TABLES TO auditor_externo;
 
--- Para el Arquitecto (Asegurar control total sobre tablas creadas por otros)
+-- Para el Arquitecto
 ALTER DEFAULT PRIVILEGES IN SCHEMA public 
 GRANT ALL ON TABLES TO arquitecto_db;
 
--- 4. LA FUNCIÓN DE SEGURIDAD (Se puede crear antes de las tablas)
+-- LA FUNCIÓN DE SEGURIDAD
 CREATE OR REPLACE FUNCTION get_current_user_email() RETURNS VARCHAR AS $$
 BEGIN
     RETURN current_setting('app.current_email', true);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-SET LOCAL app.current_email = 'miguel@correo.com';
-
-
 
 CREATE TYPE privacidad_msg AS ENUM ('cualquiera', 'solo_amigos', 'nadie');
 CREATE TYPE tipo_sexo AS ENUM ('M', 'F');
