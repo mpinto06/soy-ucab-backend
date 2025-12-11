@@ -4,15 +4,18 @@
 INSERT INTO Miembro (correo_electronico, hash_contrasena, encabezado_perfil, privacidad_mensajes) VALUES
 ('miguel@ucab.edu.ve', 'hash123', 'Estudiante de Ingeniería', 'cualquiera'),
 ('maria@ucab.edu.ve', 'hash456', 'Delegada de curso', 'solo_amigos'),
+('arturo@ucab.edu.ve', 'hash789', 'Programador Junior', 'cualquiera'),
 ('ingenieria@ucab.edu.ve', 'hash789', 'Facultad de Ingeniería', 'nadie'),
 ('informatica@ucab.edu.ve', 'hashabc', 'Escuela de Informática', 'cualquiera'),
 ('civil@ucab.edu.ve', 'hash_civil', 'Escuela de Ingeniería Civil', 'cualquiera'),
 ('google@empresa.com', 'hashxyz', 'Tech Company', 'cualquiera');
 
+
 -- Personas
 INSERT INTO Persona (correo_electronico, primer_nombre, primer_apellido, fecha_nacimiento, sexo, ubicacion_geografica) VALUES
 ('miguel@ucab.edu.ve', 'Miguel', 'Pinto', '2004-06-01', 'M', 'Caracas'),
-('maria@ucab.edu.ve', 'Maria', 'Perez', '2003-05-15', 'F', 'Caracas');
+('maria@ucab.edu.ve', 'Maria', 'Perez', '2003-05-15', 'F', 'Caracas'),
+('arturo@ucab.edu.ve', 'Arturo', 'Pinto', '2002-08-20', 'M', 'Caracas');
 
 -- Organizaciones
 INSERT INTO Organizacion (correo_electronico, nombre_organizacion, descripcion_org) VALUES
@@ -166,9 +169,9 @@ VALUES ('google@empresa.com', 'SRE Engineer', 'Ingeniería Informática');
 
 -- Es_Amigo
 INSERT INTO Es_Amigo (correo_persona1, correo_persona2, estado) VALUES
-('miguel@ucab.edu.ve', 'maria@ucab.edu.ve', 'aceptada');
+('maria@ucab.edu.ve', 'miguel@ucab.edu.ve', 'aceptada');
 
--- Sigue
+-- Sigue    
 INSERT INTO Sigue (correo_seguidor, correo_seguido) VALUES
 ('miguel@ucab.edu.ve', 'informatica@ucab.edu.ve');
 
@@ -190,7 +193,7 @@ INSERT INTO Pertenece (nombre_grupo, correo_miembro, rol_en_grupo) VALUES
 INSERT INTO Publicacion (id_publicacion, correo_autor, id_grupo, texto_pub) VALUES
 ('2025-11-20 16:45:12', 'miguel@ucab.edu.ve', 'Devs UCAB', '¿Alguien sabe cuándo es la entrega?'),
 ('2025-11-22 10:00:00', 'maria@ucab.edu.ve', NULL, '¡Por fin terminaron los parciales! A descansar un poco.'),  
-('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', NULL, 'Encuesta sobre electivas');
+('2026-11-21 09:00:00', 'informatica@ucab.edu.ve', NULL, 'Encuesta sobre electivas');
 
 -- Archivo Publicacion
 INSERT INTO Archivo_Publicacion (id_publicacion, correo_autor, nombre_archivo, formato_archivo, archivo) VALUES 
@@ -220,16 +223,20 @@ INSERT INTO Archivo_Mensaje (id_mensaje, correo_emisor, correo_receptor, nombre_
 
 -- Encuesta
 INSERT INTO Encuesta (id_publicacion, correo_autor, fecha_hora_fin) VALUES
-('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', '2025-12-01 23:59:59-04');
+('2026-11-21 09:00:00', 'informatica@ucab.edu.ve', '2026-12-01 23:59:59-04');
 
 -- Opciones de Encuesta
-INSERT INTO Opcion (id_publicacion, correo_autor, texto_opcion, total_votos) VALUES
-('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial', 0),
-('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Computación Gráfica', 0);
+INSERT INTO Opcion (id_publicacion, correo_autor, texto_opcion) VALUES
+('2026-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial'),
+('2026-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Computación Gráfica');
 
--- Voto
-INSERT INTO Vota (correo_miembro, id_publicacion, correo_autor_encuesta, texto_opcion) VALUES
-('miguel@ucab.edu.ve', '2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial');
+-- Para crear voto, utilizamos el stored procedure
+CALL registrar_voto_encuesta(
+    'miguel@ucab.edu.ve',
+    '2026-11-21 09:00:00',
+    'informatica@ucab.edu.ve',
+    'Inteligencia Artificial'
+);
 
 
 -- Eventos
