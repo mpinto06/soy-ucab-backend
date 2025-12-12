@@ -147,7 +147,12 @@ INSERT INTO Expresa (nombre_interes, correo_miembro) VALUES
 
 -- Ofertas de Trabajo
 INSERT INTO Oferta_Trabajo (correo_publicador, nombre_cargo, tipo_cargo, modalidad, ubicacion) VALUES
+('civil@ucab.edu.ve', 'Ingeniero Civil', 'Jornada Parcial', 'Remoto', 'Caracas'),
+('google@empresa.com', 'QA Tester', 'Voluntariado', 'Presencial', 'Caracas'),
 ('google@empresa.com', 'SRE Engineer', 'Jornada Completa', 'Presencial', 'Caracas');
+
+INSERT INTO Oferta_Trabajo (correo_publicador, nombre_cargo, tipo_cargo, modalidad, ubicacion,fecha_publicacion) VALUES
+('google@empresa.com', 'Ingeniero Informatico', 'Pasantía', 'Presencial', 'Caracas','2025-10-12');
 
 -- Aplica
 INSERT INTO Aplica (correo_aplicante, correo_publicador, nombre_cargo, nombre_archivo, texto_aplicante) VALUES
@@ -155,7 +160,9 @@ INSERT INTO Aplica (correo_aplicante, correo_publicador, nombre_cargo, nombre_ar
 
 -- Guarda
 INSERT INTO Guarda (correo_persona, correo_publicador, nombre_cargo) 
-VALUES ('maria@ucab.edu.ve', 'google@empresa.com', 'SRE Engineer');
+VALUES ('maria@ucab.edu.ve', 'google@empresa.com', 'SRE Engineer'),
+ ('miguel@ucab.edu.ve', 'google@empresa.com', 'Ingeniero Informatico'),
+ ('miguel@ucab.edu.ve', 'google@empresa.com', 'QA Tester');
 
 -- Etiqueta
 INSERT INTO Etiqueta (correo_publicador, nombre_cargo, nombre_carrera) 
@@ -234,6 +241,7 @@ INSERT INTO Vota (correo_miembro, id_publicacion, correo_autor_encuesta, texto_o
 
 -- Eventos
 INSERT INTO Evento (nombre_evento, correo_organizador, descripcion, modalidad, estado_evento, ubicacion, fecha_inicio, fecha_fin) VALUES
+('Hackathon 2026', 'informatica@ucab.edu.ve', 'Competencia de prog', 'presencial', 'publicado', 'Caracas', '2026-01-01 09:00:00', '2026-01-03 17:00:00'),
 ('Hackathon 2025', 'informatica@ucab.edu.ve', 'Competencia de prog', 'presencial', 'publicado', 'Caracas', '2025-12-01 09:00:00', '2025-12-01 17:00:00');
 
 -- Asiste
@@ -242,4 +250,6 @@ INSERT INTO Asiste (correo_miembro, nombre_evento) VALUES
 
 -- Muestra Interes
 INSERT INTO Muestra_Interes (correo_miembro, nombre_evento) 
-VALUES ('maria@ucab.edu.ve', 'Hackathon 2025');
+VALUES ('maria@ucab.edu.ve', 'Hackathon 2025'),
+('miguel@ucab.edu.ve', 'Hackathon 2025'),
+('miguel@ucab.edu.ve', 'Hackathon 2026');
