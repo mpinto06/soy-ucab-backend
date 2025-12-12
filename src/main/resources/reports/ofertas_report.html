@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Reporte de Ofertas</title>
+    <style>
+      body {
+        font-family: "Helvetica", sans-serif;
+        color: #333;
+      }
+      h1 {
+        color: #004b85;
+        border-bottom: 2px solid #004b85;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #0066cc;
+        margin-top: 30px;
+      }
+      .header-info {
+        margin-bottom: 30px;
+        background: #f0f7ff;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #004b85;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      .empty-msg {
+        font-style: italic;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-info">
+      <h1>Reporte de Actividad Laboral</h1>
+      <p><strong>Usuario:</strong> {{usuario}}</p>
+      <p><strong>Correo:</strong> {{correo}}</p>
+      <p><strong>Fecha del reporte:</strong> {{fecha_generacion}}</p>
+    </div>
+
+    <h2>📌 Ofertas Guardadas</h2>
+    {{#if guardadas}}
+    <table>
+      <thead>
+        <tr>
+          <th>Empresa</th>
+          <th>Cargo</th>
+          <th>Tipo Cargo</th>
+          <th>Modalidad</th>
+          <th>Ubicación</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each guardadas}}
+        <tr>
+          <td>{{empresa}}</td>
+          <td>{{cargo}}</td>
+          <td>{{tipo_cargo}}</td>
+          <td>{{modalidad}}</td>
+          <td>{{ubicacion}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p class="empty-msg">No tienes ofertas guardadas actualmente.</p>
+    {{/if}}
+
+    <h2>🚀 Postulaciones Realizadas</h2>
+    {{#if aplicadas}}
+    <table>
+      <thead>
+        <tr>
+          <th>Empresa</th>
+          <th>Cargo</th>
+          <th>Tipo Cargo</th>
+          <th>Fecha Aplicación</th>
+          <th>Estado Oferta</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each aplicadas}}
+        <tr>
+          <td>{{empresa}}</td>
+          <td>{{cargo}}</td>
+          <td>{{tipo_cargo}}</td>
+          <td>{{fecha_aplicacion}}</td>
+          <td>{{estado}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p class="empty-msg">No has realizado postulaciones aún.</p>
+    {{/if}}
+  </body>
+</html>
