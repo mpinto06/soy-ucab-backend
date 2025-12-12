@@ -48,34 +48,87 @@ public class OfertasAplicadasService {
 
         // 2. Fetch Saved Offers
         String savedSql = """
-                SELECT o.nombre_organizacion as empresa, ot.nombre_cargo as cargo, CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.modalidad AS text) as modalidad, ot.ubicacion
+                SELECT o.nombre_organizacion as empresa, ot.nombre_cargo as cargo,
+                       CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.modalidad AS text) as modalidad,
+                       ot.ubicacion, ot.descripcion_cargo, TO_CHAR(ot.fecha_publicacion, 'DD Mon YYYY') as fecha_publicacion,
+                       m.archivo_foto, m.formato_foto
                 FROM Guarda g
                 JOIN Oferta_Trabajo ot ON g.correo_publicador = ot.correo_publicador AND g.nombre_cargo = ot.nombre_cargo
                 JOIN Organizacion o ON ot.correo_publicador = o.correo_electronico
+                LEFT JOIN Miembro m ON o.correo_electronico = m.correo_electronico
                 WHERE g.correo_persona = ?
                 """;
         List<Map<String, Object>> savedOffers = jdbcTemplate.queryForList(savedSql, email);
+        processOffers(savedOffers);
 
         // 3. Fetch Applied Offers
         String appliedSql = """
-                SELECT o.nombre_organizacion as empresa, ot.nombre_cargo as cargo, CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.estado_oferta AS text) as estado, TO_CHAR(a.fecha_aplicacion, 'DD-MM-YYYY') as fecha_aplicacion
+                SELECT o.nombre_organizacion as empresa, ot.nombre_cargo as cargo,
+                       CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.estado_oferta AS text) as estado,
+                       TO_CHAR(a.fecha_aplicacion, 'DD Mon YYYY') as fecha_aplicacion,
+                       ot.ubicacion, ot.descripcion_cargo, CAST(ot.modalidad AS text) as modalidad,
+                       m.archivo_foto, m.formato_foto
                 FROM Aplica a
                 JOIN Oferta_Trabajo ot ON a.correo_publicador = ot.correo_publicador AND a.nombre_cargo = ot.nombre_cargo
                 JOIN Organizacion o ON ot.correo_publicador = o.correo_electronico
+                LEFT JOIN Miembro m ON o.correo_electronico = m.correo_electronico
                 WHERE a.correo_aplicante = ?
                 """;
         List<Map<String, Object>> appliedOffers = jdbcTemplate.queryForList(appliedSql, email);
+        processOffers(appliedOffers);
 
         // 4. Build Data Map
         Map<String, Object> data = new HashMap<>();
         data.put("usuario", userName);
         data.put("correo", email);
         data.put("fecha_generacion", LocalDate.now().toString());
+        data.put("guardadas_count", savedOffers.size());
+        data.put("aplicadas_count", appliedOffers.size());
         data.put("guardadas", savedOffers);
         data.put("aplicadas", appliedOffers);
 
         // 5. Generate PDF
         return generateReportPdf("ofertas_report.html", data);
+    }
+
+    private void processOffers(List<Map<String, Object>> offers) {
+        for (Map<String, Object> offer : offers) {
+            // Company Initial
+            String empresa = (String) offer.get("empresa");
+            if (empresa != null && !empresa.isEmpty()) {
+                offer.put("initial", empresa.substring(0, 1).toUpperCase());
+            } else {
+                offer.put("initial", "?");
+            }
+
+            // Process Image
+            byte[] photoBytes = (byte[]) offer.get("archivo_foto");
+            if (photoBytes != null && photoBytes.length > 0) {
+                String format = (String) offer.get("formato_foto");
+                if (format == null)
+                    format = "png"; // fallback
+                String base64 = java.util.Base64.getEncoder().encodeToString(photoBytes);
+                offer.put("logo_base64", "data:image/" + format + ";base64," + base64);
+            } else {
+                // Return null or path to a default image if desired, handled in template
+                offer.put("logo_base64", null);
+            }
+
+            // Process Mock Status for Applied Offers if 'estado' is present but we want
+            // 'estado_aplicacion'
+            if (offer.containsKey("estado")) {
+                // For now, mapping 'abierta' to 'En proceso' and 'cerrada' to 'Cerrada' or
+                // similar for visual badging
+                String estadoOferta = (String) offer.get("estado");
+                if ("abierta".equalsIgnoreCase(estadoOferta)) {
+                    offer.put("estado_badge", "En proceso");
+                    offer.put("estado_class", "badge-process");
+                } else {
+                    offer.put("estado_badge", "Cerrada");
+                    offer.put("estado_class", "badge-closed");
+                }
+            }
+        }
     }
 
     private byte[] generateReportPdf(String templateFileName, Map<String, Object> data) throws IOException {

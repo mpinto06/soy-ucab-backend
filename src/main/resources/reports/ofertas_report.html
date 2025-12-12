@@ -5,110 +5,361 @@
     <title>Reporte de Ofertas</title>
     <style>
       body {
-        font-family: "Helvetica", sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #333;
+        margin: 40px;
+        background-color: #ffffff;
       }
-      h1 {
-        color: #004b85;
-        border-bottom: 2px solid #004b85;
-        padding-bottom: 10px;
-      }
-      h2 {
-        color: #0066cc;
-        margin-top: 30px;
-      }
-      .header-info {
+      
+      /* Header */
+      .main-header {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
         margin-bottom: 30px;
-        background: #f0f7ff;
-        padding: 15px;
-        border-radius: 5px;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
+      .main-header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+        color: #222;
       }
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #004b85;
-        color: white;
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      .empty-msg {
-        font-style: italic;
+      .report-date {
+        font-size: 12px;
         color: #888;
+        margin: 0;
+      }
+      
+      /* Summary Stats */
+      .summary-section {
+        margin-bottom: 40px;
+      }
+      .summary-title {
+        font-size: 14px;
+        color: #888;
+        margin-bottom: 5px;
+      }
+      .summary-counts {
+        font-size: 14px;
+        color: #555;
+      }
+      .summary-counts strong {
+        color: #000;
+        font-weight: 700;
+        margin-left: 5px;
+      }
+      
+      /* Section Headers */
+      .section-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+        margin-top: 40px;
+      }
+      .section-icon {
+        width: 32px;
+        height: 32px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color:#555;
+      }
+      .section-titles h2 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 2px 0;
+      }
+      .section-titles h2 span {
+        background-color: #f0f0f0;
+        color: #666;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+      .section-titles p {
+        font-size: 13px;
+        color: #888;
+        margin: 0;
+      }
+      
+      /* Cards */
+      .card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 20px;
+        page-break-inside: avoid;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      }
+      
+      .logo-container {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+      }
+      .logo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .logo-placeholder {
+         width: 100%;
+         height: 100%;
+         background: #f8f9fa;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         color: #ccc;
+         font-weight: bold;
+         font-size: 20px;
+      }
+      
+      .card-content {
+        flex-grow: 1;
+      }
+      
+      .card-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+      }
+      
+      .job-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #000;
+        margin: 0;
+      }
+      
+      .badge-saved {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: #666;
+        display: flex;
+        align-items: center;
+        background: #fff;
+        gap: 4px;
+        font-weight: 600;
+      }
+      
+      .badge-status {
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .badge-process { background-color: #f0f0f0; color: #666; } /* Default gray like mock */
+      .badge-closed { background-color: #ffebee; color: #d32f2f; }
+      .badge-selected { background-color: #e8f5e9; color: #2e7d32; }
+      .badge-applied { background-color: #e3f2fd; color: #1565c0; } 
+      
+      .company-name {
+        font-size: 14px;
+        color: #666;
+        margin: 0 0 12px 0;
+      }
+      
+      .meta-row {
+        display: flex;
+        gap: 15px;
+        font-size: 12px;
+        color: #777;
+        margin-bottom: 12px;
+        align-items: center;
+      }
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .meta-icon {
+        width: 14px;
+        height: 14px;
+        fill: #999;
+      }
+      
+      .salary {
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 8px 0;
+      }
+      
+      .description {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.4;
+        margin: 0;
+      }
+      
+      .empty-msg {
+        color: #888;
+        font-style: italic;
+        padding-left: 20px;
       }
     </style>
   </head>
   <body>
-    <div class="header-info">
-      <h1>Reporte de Actividad Laboral</h1>
-      <p><strong>Usuario:</strong> {{usuario}}</p>
-      <p><strong>Correo:</strong> {{correo}}</p>
-      <p><strong>Fecha del reporte:</strong> {{fecha_generacion}}</p>
+    <!-- Header -->
+    <div class="main-header">
+      <h1>Ofertas de Trabajo - Guardadas y Aplicaciones</h1>
+      <p class="report-date">
+        Fecha:<br>
+        {{fecha_generacion}}
+      </p>
     </div>
 
-    <h2>📌 Ofertas Guardadas</h2>
-    {{#if guardadas}}
-    <table>
-      <thead>
-        <tr>
-          <th>Empresa</th>
-          <th>Cargo</th>
-          <th>Tipo Cargo</th>
-          <th>Modalidad</th>
-          <th>Ubicación</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each guardadas}}
-        <tr>
-          <td>{{empresa}}</td>
-          <td>{{cargo}}</td>
-          <td>{{tipo_cargo}}</td>
-          <td>{{modalidad}}</td>
-          <td>{{ubicacion}}</td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
-    {{else}}
-    <p class="empty-msg">No tienes ofertas guardadas actualmente.</p>
-    {{/if}}
+    <!-- Summary -->
+    <div class="summary-section">
+      <div class="summary-title">Registro de ofertas guardadas y aplicaciones enviadas</div>
+      <div class="summary-counts">
+        Guardadas <strong>{{guardadas_count}}</strong>
+        &nbsp;&nbsp;&nbsp;
+        Aplicadas <strong>{{aplicadas_count}}</strong>
+      </div>
+    </div>
 
-    <h2>🚀 Postulaciones Realizadas</h2>
-    {{#if aplicadas}}
-    <table>
-      <thead>
-        <tr>
-          <th>Empresa</th>
-          <th>Cargo</th>
-          <th>Tipo Cargo</th>
-          <th>Fecha Aplicación</th>
-          <th>Estado Oferta</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each aplicadas}}
-        <tr>
-          <td>{{empresa}}</td>
-          <td>{{cargo}}</td>
-          <td>{{tipo_cargo}}</td>
-          <td>{{fecha_aplicacion}}</td>
-          <td>{{estado}}</td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
+    <!-- Saved Offers -->
+    <div class="section-header">
+      <div class="section-icon">
+        <!-- Bookmark Icon SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+        </svg>
+      </div>
+      <div class="section-titles">
+        <h2>Ofertas Guardadas <span>{{guardadas_count}}</span></h2>
+        <p>Ofertas de interés para revisar y aplicar más adelante</p>
+      </div>
+    </div>
+
+    {{#each guardadas}}
+    <div class="card">
+      <div class="logo-container">
+        {{#if logo_base64}}
+          <img src="{{logo_base64}}" alt="Logo">
+        {{else}}
+          <div class="logo-placeholder">{{initial}}</div>
+        {{/if}}
+      </div>
+      <div class="card-content">
+        <div class="card-header-row">
+          <h3 class="job-title">{{cargo}}</h3>
+          <div class="badge-saved">
+             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 16 16">
+               <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+             </svg>
+             Guardado
+          </div>
+        </div>
+        <div class="company-name">{{empresa}}</div>
+        
+        <div class="meta-row">
+          <div class="meta-item">
+            <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+            </svg>
+            {{ubicacion}}
+          </div>
+          <div class="meta-item">
+            <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+            </svg>
+            {{tipo_cargo}}
+          </div>
+          <div class="meta-item">
+            <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+            </svg>
+            {{fecha_publicacion}}
+          </div>
+        </div>
+        
+        <div class="salary">{{rango_salarial}}</div>
+        <p class="description">{{descripcion_cargo}}</p>
+      </div>
+    </div>
     {{else}}
-    <p class="empty-msg">No has realizado postulaciones aún.</p>
-    {{/if}}
+    <p class="empty-msg">No tienes ofertas guardadas.</p>
+    {{/each}}
+
+
+    <!-- Applied Offers -->
+    <div class="section-header" style="margin-top: 50px;">
+      <div class="section-icon">
+        <!-- Paper Plane Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M15.825.12a.5.5 0 0 1 .132.584l-3 9a.5.5 0 0 1-.943-.08L9.98 6.02 5.56 10.439a.5.5 0 0 1-.84-.368V7.3L.65 5.968a.5.5 0 0 1 .081-.943l15-5a.5.5 0 0 1 .094 0z"/>
+        </svg>
+      </div>
+      <div class="section-titles">
+        <h2>Aplicaciones Enviadas <span>{{aplicadas_count}}</span></h2>
+        <p>Seguimiento del estado de las aplicaciones enviadas</p>
+      </div>
+    </div>
+
+    {{#each aplicadas}}
+    <div class="card">
+      <div class="logo-container">
+        {{#if logo_base64}}
+          <img src="{{logo_base64}}" alt="Logo">
+        {{else}}
+          <div class="logo-placeholder">{{initial}}</div>
+        {{/if}}
+      </div>
+      <div class="card-content">
+        <div class="card-header-row">
+          <h3 class="job-title">{{cargo}}</h3>
+          <div class="badge-status {{estado_class}}">
+            {{estado_badge}}
+          </div>
+        </div>
+        <div class="company-name">{{empresa}}</div>
+        
+        <div class="meta-row">
+          <div class="meta-item">
+            <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+            </svg>
+            {{ubicacion}}
+          </div>
+          <div class="meta-item">
+            <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+            </svg>
+            {{tipo_cargo}}
+          </div>
+          <div class="meta-item">
+            <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+            </svg>
+            {{fecha_aplicacion}}
+          </div>
+        </div>
+        
+        <p class="description">{{descripcion_cargo}}</p>
+      </div>
+    </div>
+    {{else}}
+    <p class="empty-msg">No has enviado aplicaciones.</p>
+    {{/each}}
+    
   </body>
 </html>

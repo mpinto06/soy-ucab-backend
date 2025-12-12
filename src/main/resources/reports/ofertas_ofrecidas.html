@@ -4,59 +4,172 @@
     <meta charset="UTF-8">
     <title>Reporte de Ofertas Ofrecidas</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 40px; }
-        h1 { color: #005A9C; text-align: center; border-bottom: 2px solid #005A9C; padding-bottom: 10px; }
-        h2 { color: #008CBA; margin-top: 30px; border-left: 5px solid #008CBA; padding-left: 10px; }
-        .header-info { margin-bottom: 30px; text-align: center; font-size: 0.9em; color: #666; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f2f2f2; color: #005A9C; font-weight: bold; }
-        tr:hover { background-color: #f9f9f9; }
-        .empty-message { font-style: italic; color: #888; padding: 10px; text-align: center; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; color: white; }
-        .badge-abierta { background-color: #28a745; }
-        .badge-cerrada { background-color: #dc3545; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 40px; background: #fff;}
+        .main-header { border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        .main-header h1 { font-size: 24px; font-weight: 600; margin: 0 0 5px 0; color: #222; }
+        .report-date { font-size: 12px; color: #888; margin: 0; }
+        
+        /* Organization Profile */
+        .org-profile { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .org-logo { width: 48px; height: 48px; border-radius: 50%; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden; font-size: 18px; }
+        .org-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .org-name { font-size: 18px; font-weight: 600; color: #333; }
+        .report-subtitle { font-size: 13px; color: #888; margin-bottom: 30px; }
+
+        /* Summary Stats Cards */
+        .stats-container { display: flex; gap: 20px; margin-bottom: 40px; }
+        .stat-card { flex: 1; background: #f9f9f9; border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-icon { font-size: 20px; margin-bottom: 8px; color: #666; display: block; margin: 0 auto 8px auto; width: 24px; height: 24px; stroke-width: 1.5; }
+        .stat-label { font-size: 12px; color: #666; display: block; margin-bottom: 5px; }
+        .stat-value { font-size: 18px; font-weight: 700; color: #000; }
+
+        /* Section Title */
+        .section-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 15px; }
+
+        /* Offer Cards */
+        .offer-card { border: 1px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 15px; page-break-inside: avoid; }
+        .offer-header { margin-bottom: 8px; }
+        .offer-title { font-size: 16px; font-weight: 700; color: #000; margin: 0 0 8px 0; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
+        .badge-blue { background: #e3f2fd; color: #1976d2; }
+        .badge-purple { background: #f3e5f5; color: #7b1fa2; }
+        .badge-orange { background: #fff3e0; color: #f57c00; }
+        .badge-green { background: #e8f5e9; color: #388e3c; }
+        .badge-pink { background: #fce4ec; color: #c2185b; }
+        .badge-cyan { background: #e0f7fa; color: #0097a7; }
+        .badge-gray { background: #f5f5f5; color: #616161; }
+
+        .meta-info { font-size: 13px; color: #777; display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .meta-icon { width: 14px; height: 14px; fill: #999; margin-right: 4px; }
+        
+        .metrics-row { display: flex; align-items: center; gap: 20px; font-size: 13px; color: #333; }
+        .metric { display: flex; align-items: center; gap: 6px; }
+        .metric-icon-box { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+        .metric-blue { background: #e3f2fd; color: #1976d2; }
+        .metric-green { background: #e8f5e9; color: #388e3c; }
+        .metric-label { color: #666; font-size: 12px; }
+        .metric-value { font-weight: 700; font-size: 14px; }
+        .conversion-rate { color: #666; margin-left: auto; font-size: 12px; }
+
     </style>
 </head>
 <body>
-    <h1>Ofertas Ofrecidas</h1>
-    
-    <div class="header-info">
-        <p><strong>Organización:</strong> {{nombre_organizacion}} <span class="badge badge-abierta" style="background-color: #008CBA;">{{tipo_organizacion}}</span></p>
-        <p><strong>Correo:</strong> {{correo}}</p>
-        <p><strong>Fecha de Generación:</strong> {{fecha_generacion}}</p>
+
+    <!-- Header -->
+    <div class="main-header">
+        <h1>Ofertas de Trabajo Publicadas por la Organización</h1>
+        <p class="report-date">
+            Fecha:<br>
+            {{fecha_generacion}}
+        </p>
     </div>
 
-    {{#if ofertas}}
-    <table>
-        <thead>
-            <tr>
-                <th>Cargo</th>
-                <th>Tipo</th>
-                <th>Modalidad</th>
-                <th>Ubicación</th>
-                <th>Fecha Pub.</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each ofertas}}
-            <tr>
-                <td>{{cargo}}</td>
-                <td>{{tipo_cargo}}</td>
-                <td>{{modalidad}}</td>
-                <td>{{ubicacion}}</td>
-                <td>{{fecha_publicacion}}</td>
-                <td>
-                    <span class="badge badge-{{estado}}">{{estado}}</span>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+    <!-- Org Details -->
+    <div class="org-profile">
+        <div class="org-logo">
+            {{#if logo_base64}}
+                <img src="{{logo_base64}}" alt="Logo">
+            {{else}}
+                {{initial}}
+            {{/if}}
+        </div>
+        <div class="org-name">{{nombre_organizacion}}</div>
+    </div>
+    <p class="report-subtitle">Resumen de ofertas activas con estadísticas de visualización y aplicaciones</p>
+
+    <!-- Summary Stats -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <!-- Briefcase Icon -->
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.105-1.992 2.105H5.742c-1.127 0-1.992-1.023-1.992-2.105v-4.25m16.5 0a2.125 2.125 0 00-2.125-2.125H5.867a2.125 2.125 0 00-2.125 2.125m16.5 0v-4.25a2.125 2.125 0 00-2.125-2.125h-3.375c-.621 0-1.125-.504-1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-3.75c-.621 0-1.125.504-1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H5.867a2.125 2.125 0 00-2.125 2.125v4.25" />
+            </svg>
+            <span class="stat-label">Total de ofertas</span>
+            <span class="stat-value">{{total_ofertas}}</span>
+        </div>
+        <div class="stat-card">
+            <!-- Eye Icon -->
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="stat-label">Total de vistas</span>
+            <span class="stat-value">{{total_vistas}}</span>
+        </div>
+        <div class="stat-card">
+            <!-- Group/Applicants Icon -->
+            <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+            </svg>
+            <span class="stat-label">Total de aplicantes</span>
+            <span class="stat-value">{{total_aplicantes}}</span>
+        </div>
+    </div>
+
+    <!-- Offers List -->
+    <div class="section-title">Ofertas Activas</div>
+
+    {{#each ofertas}}
+    <div class="offer-card">
+        <h3 class="offer-title">{{cargo}}</h3>
+        
+        <span class="badge {{badge_class}}">{{badge_text}}</span>
+        
+
+        <div class="meta-info">
+             <!-- Location Icon -->
+             <div style="display:flex; align-items:center;">
+                 <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                   <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                 </svg>
+                 {{ubicacion}}
+             </div>
+             <!-- Calendar Icon -->
+             <div style="display:flex; align-items:center;">
+                 <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                   <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                 </svg>
+                 {{tiempo_publicacion}}
+             </div>
+        </div>
+
+        <div class="metrics-row">
+            <!-- Views Metric -->
+            <div class="metric">
+                <div class="metric-icon-box metric-blue">
+                    <svg style="width:14px; height:14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+                <div>
+                   <div class="metric-label">Vistas</div>
+                   <div class="metric-value">{{vistas}}</div>
+                </div>
+            </div>
+
+            <!-- Applicants Metric -->
+            <div class="metric">
+                <div class="metric-icon-box metric-green">
+                    <svg style="width:14px; height:14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="metric-label">Aplicantes</div>
+                    <div class="metric-value">{{aplicantes}}</div>
+                </div>
+            </div>
+
+            <div class="conversion-rate">
+                Tasa de conversión: {{tasa_conversion}}
+            </div>
+        </div>
+    </div>
     {{else}}
-    <div class="empty-message">Esta organización no tiene ofertas de trabajo registradas actualmente.</div>
-    {{/if}}
+    <p>No hay ofertas activas por mostrar.</p>
+    {{/each}}
 
 </body>
 </html>
