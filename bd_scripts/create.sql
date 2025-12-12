@@ -178,7 +178,6 @@ CREATE TABLE Aplica (
     correo_aplicante VARCHAR(255),
     correo_publicador VARCHAR(255),
     nombre_cargo VARCHAR(255),
-    fecha_aplicacion DATE DEFAULT CURRENT_DATE,
     nombre_archivo VARCHAR(50),
     archivo_cv BYTEA,
     texto_aplicante TEXT,
