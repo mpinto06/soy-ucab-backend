@@ -4,6 +4,7 @@
 INSERT INTO Miembro (correo_electronico, hash_contrasena, encabezado_perfil, privacidad_mensajes) VALUES
 ('miguel@ucab.edu.ve', 'hash123', 'Estudiante de Ingeniería', 'cualquiera'),
 ('maria@ucab.edu.ve', 'hash456', 'Delegada de curso', 'solo_amigos'),
+('jose@ucab.edu.ve', 'hash789', 'Programador Junior', 'cualquiera'),
 ('arturo@ucab.edu.ve', 'hash789', 'Programador Junior', 'cualquiera'),
 ('ingenieria@ucab.edu.ve', 'hash789', 'Facultad de Ingeniería', 'nadie'),
 ('informatica@ucab.edu.ve', 'hashabc', 'Escuela de Informática', 'cualquiera'),
@@ -15,7 +16,8 @@ INSERT INTO Miembro (correo_electronico, hash_contrasena, encabezado_perfil, pri
 INSERT INTO Persona (correo_electronico, primer_nombre, primer_apellido, fecha_nacimiento, sexo, ubicacion_geografica) VALUES
 ('miguel@ucab.edu.ve', 'Miguel', 'Pinto', '2004-06-01', 'M', 'Caracas'),
 ('maria@ucab.edu.ve', 'Maria', 'Perez', '2003-05-15', 'F', 'Caracas'),
-('arturo@ucab.edu.ve', 'Arturo', 'Pinto', '2002-08-20', 'M', 'Caracas');
+('arturo@ucab.edu.ve', 'Arturo', 'Pinto', '2002-08-20', 'M', 'Caracas'),
+('jose@ucab.edu.ve', 'Jose', 'Pinto', '2001-01-01', 'M', 'Caracas');
 
 -- Organizaciones
 INSERT INTO Organizacion (correo_electronico, nombre_organizacion, descripcion_org) VALUES
@@ -75,6 +77,10 @@ INSERT INTO Periodo (id_periodo, correo_persona, fecha_inicio, fecha_fin, descri
 ('2024-03-01 16:00:00', 'maria@ucab.edu.ve', '2024-03-01', NULL, 'Coordinadora de Eventos Académicos'),
 ('2026-09-20 17:00:00', 'maria@ucab.edu.ve', '2026-09-20', NULL, 'Maestría en Estructuras');
 
+--(Para usuario josé)
+INSERT INTO Periodo (id_periodo, correo_persona, fecha_inicio, fecha_fin, descripcion_periodo) VALUES
+('2025-01-15 18:00:00', 'jose@ucab.edu.ve', '2025-01-15', NULL, 'Freelance Junior UI/UX Designer'),
+('2020-01-16 17:00:00', 'jose@ucab.edu.ve', '2020-01-16', '2024-01-15', 'Estudios de Ingeniería Informática');
 
 -- Periodo Educativo
 -- Miguel
@@ -88,6 +94,9 @@ INSERT INTO Periodo_Educativo (id_periodo, correo_persona, id_carrera, nombre_es
 ('2022-11-01 09:00:00', 'maria@ucab.edu.ve', 'Ingeniería Civil', NULL),
 ('2026-09-20 17:00:00', 'maria@ucab.edu.ve', 'Maestría en Ingeniería Civil', NULL);
 
+-- Jose
+INSERT INTO Periodo_Educativo (id_periodo, correo_persona, id_carrera, nombre_estudio) VALUES
+('2020-01-16 17:00:00', 'jose@ucab.edu.ve', 'Ingeniería Informática', NULL);
 
 -- Periodo Experiencia
 -- Miguel
@@ -100,6 +109,10 @@ INSERT INTO Periodo_Experiencia (id_periodo, correo_persona, correo_organizacion
 ('2021-10-01 08:00:00', 'maria@ucab.edu.ve', 'civil@ucab.edu.ve', 'Pasantía', 'Asistente de Lab. de Suelos'),
 ('2023-05-20 13:00:00', 'maria@ucab.edu.ve', 'google@empresa.com', 'Jornada Parcial', 'QA Tester'),
 ('2024-03-01 16:00:00', 'maria@ucab.edu.ve', 'ingenieria@ucab.edu.ve', 'Voluntariado', 'Líder de Logística');
+
+-- Jose
+INSERT INTO Periodo_Experiencia (id_periodo, correo_persona, correo_organizacion, tipo_cargo, cargo) VALUES
+('2025-01-15 18:00:00', 'jose@ucab.edu.ve', 'google@empresa.com', 'Jornada Parcial', 'Junior UI/UX Designer');
 
 
 -- Habilidades e Intereses
@@ -169,11 +182,17 @@ VALUES ('google@empresa.com', 'SRE Engineer', 'Ingeniería Informática');
 
 -- Es_Amigo
 INSERT INTO Es_Amigo (correo_persona1, correo_persona2, estado) VALUES
+('arturo@ucab.edu.ve', 'jose@ucab.edu.ve', 'aceptada'),
+('arturo@ucab.edu.ve', 'maria@ucab.edu.ve', 'aceptada'),
+('arturo@ucab.edu.ve', 'miguel@ucab.edu.ve', 'aceptada'),
+('jose@ucab.edu.ve', 'maria@ucab.edu.ve', 'aceptada'),
 ('maria@ucab.edu.ve', 'miguel@ucab.edu.ve', 'aceptada');
 
 -- Sigue    
 INSERT INTO Sigue (correo_seguidor, correo_seguido) VALUES
-('miguel@ucab.edu.ve', 'informatica@ucab.edu.ve');
+('miguel@ucab.edu.ve', 'informatica@ucab.edu.ve'),
+('arturo@ucab.edu.ve', 'miguel@ucab.edu.ve'),
+('jose@ucab.edu.ve', 'miguel@ucab.edu.ve');
 
 -- Valida
 INSERT INTO Valida (correo_validador, correo_validado, descripcion_relacion) VALUES
