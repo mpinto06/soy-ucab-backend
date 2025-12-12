@@ -52,6 +52,7 @@ public class EventosReportService {
                        e.descripcion,
                        CAST(e.modalidad AS text) as modalidad,
                        e.ubicacion,
+                       e.url_conferencia,
                        CAST(e.estado_evento AS text) as estado,
                        o.nombre_organizacion as organizador,
                        TO_CHAR(e.fecha_inicio, 'DD-MM-YYYY HH24:MI') as fecha_inicio,
@@ -62,6 +63,15 @@ public class EventosReportService {
                 WHERE mi.correo_miembro = ?
                 """;
         List<Map<String, Object>> events = jdbcTemplate.queryForList(eventsSql, email);
+
+        // Process events to show URL for virtual events
+        for (Map<String, Object> event : events) {
+            String modalidad = (String) event.get("modalidad");
+            if ("virtual".equalsIgnoreCase(modalidad)) {
+                String url = (String) event.get("url_conferencia");
+                event.put("ubicacion", url != null ? url : "Enlace no disponible");
+            }
+        }
 
         // 3. Build Data Map
         Map<String, Object> data = new HashMap<>();
