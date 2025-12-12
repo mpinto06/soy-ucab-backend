@@ -61,4 +61,20 @@ public class ReportController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/related-members")
+    public ResponseEntity<byte[]> generateRelatedMembers3(@RequestBody String email) {
+        try {
+            byte[] reportData = reportService.generateRelatedMembers3(email);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=related_members.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(reportData);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

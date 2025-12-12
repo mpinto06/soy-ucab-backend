@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personas de la Organización</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px;
+            background-color: #fff;
+        }
+        .header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .header .meta {
+            font-size: 14px;
+            color: #666;
+        }
+        .summary {
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #666;
+        }
+        .summary p {
+            margin: 5px 0;
+        }
+        .summary strong {
+            color: #333;
+        }
+        
+        .group-section {
+            margin-bottom: 40px;
+        }
+        .group-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .group-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-right: 15px;
+        }
+        .group-badge {
+            background-color: #000;
+            color: #fff;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .person-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .person-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px; /* Slightly rounded square as per visual style usually, or circle */
+            object-fit: cover;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .person-initials {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background-color: #333; /* Dark gray/black from image */
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .person-info {
+            flex-grow: 1;
+        }
+        .person-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #1a1a1a;
+        }
+        .person-detail {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .person-detail svg {
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+        .person-headline {
+            font-size: 13px;
+            color: #777;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Personas de la Organización {{orgName}}</h1>
+        <div class="meta">
+            <div>Fecha: {{date}}</div>
+        </div>
+    </div>
+
+    <div class="summary">
+        <p>Listado completo de miembros organizados por tipo de vinculación</p>
+        <p>Total de personas: <strong>{{totalPeople}}</strong></p>
+    </div>
+
+    {{#each groups}}
+    <div class="group-section">
+        <div class="group-header">
+            <div class="group-title">{{type}}</div>
+            <div class="group-badge">{{count}} persona{{#if plural}}s{{/if}}</div>
+        </div>
+
+        {{#each people}}
+        <div class="person-card">
+            {{#if photoBase64}}
+                <img src="{{photoBase64}}" class="person-photo" alt="{{name}}">
+            {{else}}
+                <div class="person-initials">{{initials}}</div>
+            {{/if}}
+            
+            <div class="person-info">
+                <h3 class="person-name">{{name}}</h3>
+                <div class="person-detail">
+                    <!-- Email Icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    {{email}}
+                </div>
+                {{#if location}}
+                <div class="person-detail">
+                    <!-- Location Icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    {{location}}
+                </div>
+                {{/if}}
+                
+                {{#if headline}}
+                <div class="person-headline">
+                    {{headline}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/each}}
+</body>
+</html>

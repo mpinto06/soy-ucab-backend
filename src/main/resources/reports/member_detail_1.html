@@ -1,18 +1,240 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Member Detail Report</title>
+    <title>Detalle de Miembro</title>
+    <meta charset="UTF-8">
     <style>
-        body { font-family: 'Helvetica', sans-serif; color: #333; }
-        h1 { color: #0056b3; }
-        .info { border: 1px solid #ddd; padding: 15px; border-radius: 5px; background-color: #f9f9f9; }
+        body {
+            font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #333;
+        }
+        .header .date {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        .profile-section {
+            display: flex;
+            margin-bottom: 30px;
+            align-items: flex-start;
+        }
+        .profile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ddd; /* Fallback */
+            margin-right: 20px;
+            object-fit: cover;
+        }
+        .profile-info h2 {
+            font-size: 18px;
+            margin: 0 0 5px 0;
+        }
+        .profile-info .role {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .profile-info .location {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #555;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .about-text {
+            font-size: 14px;
+            color: #555;
+        }
+        .item-list {
+            margin-top: 15px;
+        }
+        .item {
+            margin-bottom: 20px;
+            display: flex;
+        }
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .item-content {
+            flex-grow: 1;
+        }
+        .item-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        .item-subtitle {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+        .item-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .item-description {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tag {
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .interests-section .tag {
+            border: 1px solid #eee;
+            background-color: transparent;
+        }
     </style>
 </head>
 <body>
-    <h1>{{title}}</h1>
-    <div class="info">
-        <p><strong>Member Email:</strong> {{email}}</p>
-        <p><strong>Report Date:</strong> {{date}}</p>
+    <div class="header">
+        <h1>Detalle de Miembro</h1>
+        <div class="date">Fecha: {{date}}</div>
     </div>
+
+    <div class="profile-section">
+        {{#if photoBase64}}
+            <img src="{{photoBase64}}" class="profile-photo" alt="Profile Photo">
+        {{else}}
+            <div class="profile-photo" style="background-color: #ccc; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; font-weight: bold;">
+                {{initials}}
+            </div>
+        {{/if}}
+        <div class="profile-info">
+            <h2>{{fullName}}</h2>
+            <!-- If organization, show generic description or type. If person, show 'role' from profile or blank -->
+            <div class="role">{{profileHeadline}}</div>
+            <div class="location">
+                {{#if location}}{{location}}{{/if}}
+            </div>
+            
+            <div class="stats">
+                {{#if isPerson}}
+                    <span><strong>{{friendsCount}}</strong> amistades</span>
+                {{/if}}
+                <span><strong>{{followersCount}}</strong> Seguidores</span>
+                <!-- Views ignored as requested -->
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">Acerca de</div>
+        <div class="about-text">
+            {{#if description}}
+                {{description}}
+            {{else}}
+                Sin descripción disponible.
+            {{/if}}
+        </div>
+    </div>
+
+    {{#if isPerson}}
+    {{#if experiences}}
+    <div class="item-list">
+        <div class="section-title">Experiencia</div>
+        {{#each experiences}}
+        <div class="item">
+            {{#if photoBase64}}
+            <div class="item-icon">
+                <img src="{{photoBase64}}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 5px;" alt="Logo">
+            </div>
+            {{else}}
+            <div class="item-icon" style="background-color: #ccc; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff;">
+                {{initials}}
+            </div>
+            {{/if}}
+            <div class="item-content">
+                <div class="item-title">{{cargo}}</div>
+                <div class="item-subtitle">{{nombre_organizacion}}</div>
+                <div class="item-meta">{{fecha_inicio}} - {{#if fecha_fin}}{{fecha_fin}}{{else}}Presente{{/if}}</div>
+                {{#if ubicacion}}<div class="item-meta">{{ubicacion}}</div>{{/if}}
+                <div class="item-description">{{descripcion_periodo}}</div>
+                <!-- Tags could be skills, but keeping it simple for now -->
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if education}}
+    <div class="item-list">
+        <div class="section-title">Educación</div>
+        {{#each education}}
+        <div class="item">
+            {{#if photoBase64}}
+            <div class="item-icon">
+                <img src="{{photoBase64}}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 5px;" alt="Logo">
+            </div>
+            {{else}}
+            <div class="item-icon" style="background-color: #ccc; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff;">
+                {{initials}}
+            </div>
+            {{/if}}
+            <div class="item-content">
+                <div class="item-title">{{educationTitle}}</div> 
+                <div class="item-meta">{{fecha_inicio}} - {{#if fecha_fin}}{{fecha_fin}}{{else}}En curso{{/if}}</div>
+                <div class="item-description">
+                    {{descripcion_periodo}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if interests}}
+    <div>
+        <div class="section-title">Intereses</div>
+        <div class="tags interests-section">
+            {{#each interests}}
+            <span class="tag">{{this}}</span>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+    {{/if}}
+
 </body>
 </html>
