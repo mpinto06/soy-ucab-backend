@@ -380,3 +380,30 @@ CREATE TRIGGER trigger_verificar_agenda
 BEFORE INSERT ON Asiste
 FOR EACH ROW
 EXECUTE FUNCTION verificar_conflicto_agenda();
+
+
+--Constrints
+-- Intenta insertar una oferta presencial con ubicación NULL. Debe fallar.
+-- INSERT INTO Oferta_Trabajo (correo_publicador, nombre_cargo, tipo_cargo, modalidad, ubicacion) VALUES ('google@empresa.com', 'Enginner', 'Jornada Completa', 'Presencial', '');
+
+
+-- Intenta insertar una persona que nace en el futuro (2050). Debe fallar.
+-- INSERT INTO Persona (correo_electronico, primer_nombre, primer_apellido, fecha_nacimiento, sexo, ubicacion_geografica) VALUES ('miguel@ucab.edu.ve', 'Miguel', 'Martinez', '2050-01-01', 'M', 'Caracas');
+
+
+-- Intenta insertar un evento virtual sin URL. Debe fallar.
+-- INSERT INTO Evento (nombre_evento, correo_organizador, descripcion, modalidad, estado_evento, ubicacion, fecha_inicio, fecha_fin) VALUES ('Evento Malo', 'informatica@ucab.edu.ve', 'Sin URL', 'virtual', 'publicado', NULL, NOW(), NOW());
+
+--Stored Procedure
+--CALL aplicar_a_oferta('miguel@ucab.edu.ve', 'google@empresa.com', 'SRE Engineer', 'cv.pdf', '\x00', 'Hola');
+
+--Function
+--SELECT * FROM obtener_feed_priorizado('miguel@ucab.edu.ve');
+
+--Triggger
+--INSERT INTO Evento (nombre_evento, correo_organizador, descripcion, modalidad, estado_evento, ubicacion, fecha_inicio, fecha_fin) 
+--VALUES ('Charla Python', 'informatica@ucab.edu.ve', 'Charla avanzada', 'presencial', 'publicado', 'Caracas', '2025-12-01 10:00:00', '2025-12-01 12:00:00');
+
+
+--INSERT INTO Asiste (correo_miembro, nombre_evento) 
+--VALUES ('miguel@ucab.edu.ve', 'Charla Python');
