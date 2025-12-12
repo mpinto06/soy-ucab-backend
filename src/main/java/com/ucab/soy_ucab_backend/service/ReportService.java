@@ -54,7 +54,7 @@ public class ReportService {
         Map<String, Object> data = new HashMap<>();
         data.put("date", LocalDate.now().toString());
 
-        // 1. Fetch Basic Member Info
+       // Querie con informacion del miembro
         String sqlMember = "SELECT m.correo_electronico, m.encabezado_perfil, m.nombre_archivo_foto, m.archivo_foto, m.formato_foto, " +
                 "p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido, p.ubicacion_geografica, " +
                 "o.nombre_organizacion, o.descripcion_org " +
@@ -416,7 +416,7 @@ public class ReportService {
         ClassPathResource templateResource = new ClassPathResource("reports/" + templateFileName);
         String templateContent = new String(templateResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-        // Prepare request for JSReport
+        //Request a jsreport
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> template = new HashMap<>();
         template.put("content", templateContent);

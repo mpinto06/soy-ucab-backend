@@ -35,7 +35,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: #ddd; /* Fallback */
+            background-color: #ddd;
             margin-right: 20px;
             object-fit: cover;
         }
@@ -143,7 +143,6 @@
         {{/if}}
         <div class="profile-info">
             <h2>{{fullName}}</h2>
-            <!-- If organization, show generic description or type. If person, show 'role' from profile or blank -->
             <div class="role">{{profileHeadline}}</div>
             <div class="location">
                 {{#if location}}{{location}}{{/if}}
@@ -154,7 +153,6 @@
                     <span><strong>{{friendsCount}}</strong> amistades</span>
                 {{/if}}
                 <span><strong>{{followersCount}}</strong> Seguidores</span>
-                <!-- Views ignored as requested -->
             </div>
         </div>
     </div>
@@ -191,7 +189,6 @@
                 <div class="item-meta">{{fecha_inicio}} - {{#if fecha_fin}}{{fecha_fin}}{{else}}Presente{{/if}}</div>
                 {{#if ubicacion}}<div class="item-meta">{{ubicacion}}</div>{{/if}}
                 <div class="item-description">{{descripcion_periodo}}</div>
-                <!-- Tags could be skills, but keeping it simple for now -->
             </div>
         </div>
         {{/each}}

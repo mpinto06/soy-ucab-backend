@@ -43,7 +43,7 @@
             padding: 15px;
             margin-bottom: 15px;
             display: flex;
-            align-items: flex-start; /* Aligned to top for multi-line details */
+            align-items: flex-start;
         }
         .person-photo {
             width: 60px;
@@ -69,7 +69,6 @@
         }
         .person-info {
             flex-grow: 1;
-            /* Ensure info takes space but doesn't overflow weirdly */
         }
         .person-name {
             font-size: 16px;
@@ -108,7 +107,6 @@
         <div class="meta">Fecha: {{date}}</div>
     </div>
 
-    <!-- Followers -->
     {{#if followers}}
     <div class="section-title">Seguidores ({{followers.length}})</div>
     {{#each followers}}
@@ -132,7 +130,6 @@
     {{/each}}
     {{/if}}
 
-    <!-- Friends -->
     {{#if friends}}
     <div class="section-title">Amigos ({{friends.length}})</div>
     {{#each friends}}
@@ -155,7 +152,6 @@
     {{/each}}
     {{/if}}
 
-    <!-- Colleagues -->
     {{#if colleagues}}
     <div class="section-title">Mismas Organizaciones ({{colleagues.length}})</div>
     {{#each colleagues}}
@@ -181,7 +177,6 @@
     {{/each}}
     {{/if}}
 
-    <!-- Classmates -->
     {{#if classmates}}
     <div class="section-title">Misma Escuela ({{classmates.length}})</div>
     {{#each classmates}}
