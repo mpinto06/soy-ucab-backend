@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Eventos de Interés</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 40px; }
+        h1 { color: #007bff; text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .header-info { margin-bottom: 30px; background-color: #f8f9fa; padding: 15px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; color: #007bff; font-weight: bold; }
+        tr:hover { background-color: #f9f9f9; }
+        .empty-message { font-style: italic; color: #888; padding: 20px; text-align: center; border: 1px dashed #ccc; margin-top: 20px;}
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; color: white; background-color: #6c757d; }
+    </style>
+</head>
+<body>
+    <h1>Eventos Guardados</h1>
+    
+    <div class="header-info">
+        <p><strong>Usuario:</strong> {{usuario}}</p>
+        <p><strong>Correo:</strong> {{correo}}</p>
+        <p><strong>Fecha de Generación:</strong> {{fecha_generacion}}</p>
+    </div>
+
+    {{#if eventos}}
+    <table>
+        <thead>
+            <tr>
+                <th>Evento</th>
+                <th>Organizador</th>
+                <th>Modalidad</th>
+                <th>Ubicación</th>
+                <th>Fechas</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each eventos}}
+            <tr>
+                <td><strong>{{nombre_evento}}</strong><br><small>{{descripcion}}</small></td>
+                <td>{{organizador}}</td>
+                <td>{{modalidad}}</td>
+                <td>{{ubicacion}}</td>
+                <td>
+                    <small>Inicio: {{fecha_inicio}}</small><br>
+                    <small>Fin: {{fecha_fin}}</small>
+                </td>
+                <td><span class="badge">{{estado}}</span></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{else}}
+    <div class="empty-message">No tienes eventos marcados como "Interesado" actualmente.</div>
+    {{/if}}
+
+</body>
+</html>
