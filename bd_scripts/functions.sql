@@ -407,3 +407,288 @@ EXECUTE FUNCTION verificar_conflicto_agenda();
 
 --INSERT INTO Asiste (correo_miembro, nombre_evento) 
 --VALUES ('miguel@ucab.edu.ve', 'Charla Python');
+
+
+
+--Trigger
+
+CREATE OR REPLACE FUNCTION notificar_nuevo_comentario()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_autor_publicacion VARCHAR(255); -- Para almacenar el correo del autor
+    v_texto_notificacion VARCHAR(255);
+    v_id_notificacion VARCHAR(50);
+BEGIN
+    -- 1. Obtener el correo del autor de la publicación (correo_autor)
+    -- Se usa id_publicacion y correo_autor_pub para la FK en Comenta
+    SELECT P.correo_autor
+    INTO v_autor_publicacion
+    FROM Publicacion P
+    WHERE P.id_publicacion = NEW.id_publicacion AND P.correo_autor = NEW.correo_autor_pub;
+
+    -- Si el autor de la publicación es el mismo que el que comenta, no se notifica (opcional, pero buena práctica)
+    IF v_autor_publicacion = NEW.correo_miembro THEN
+        RETURN NEW;
+    END IF;
+
+    -- 2. Construir el texto de la notificación
+    v_texto_notificacion := 'Tu publicación ha sido comentada por: ' || NEW.correo_miembro;
+
+    -- 3. Generar un ID para la notificación usando el timestamp y un valor aleatorio para mayor unicidad
+    v_id_notificacion := CAST(EXTRACT(EPOCH FROM NOW()) AS VARCHAR(20)) || LPAD(CAST(FLOOR(RANDOM() * 1000) AS VARCHAR(3)), 3, '0');
+
+    -- 4. Insertar la nueva notificación en la tabla Notificacion
+    INSERT INTO Notificacion (
+        id_notificacion, 
+        correo_destinatario, 
+        texto_notificacion, 
+        fecha_hora, 
+        leida
+    )
+    VALUES (
+        v_id_notificacion,
+        v_autor_publicacion, -- Destinatario: Autor de la publicación
+        v_texto_notificacion,
+        NOW(),
+        FALSE
+    );
+
+    -- 5. Incrementar el contador de comentarios en la tabla Publicacion
+    UPDATE Publicacion
+    SET total_comen = total_comen + 1
+    WHERE id_publicacion = NEW.id_publicacion AND correo_autor = NEW.correo_autor_pub;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_comenta_notificacion
+AFTER INSERT ON Comenta
+FOR EACH ROW
+EXECUTE FUNCTION notificar_nuevo_comentario();
+
+
+
+
+
+
+
+
+
+
+
+--Store Procedure
+
+CREATE OR REPLACE PROCEDURE manejar_miembro_grupo(
+    p_nombre_grupo VARCHAR(255),
+    p_correo_miembro VARCHAR(255),
+    p_accion VARCHAR(10), -- 'ANADIR' o 'ELIMINAR'
+    -- El tipo rol_grupo debe ser referenciado como string 'rol_grupo' o VARCHAR/TEXT en los parámetros de entrada.
+    p_rol_en_grupo rol_grupo DEFAULT 'participante'
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_conteo_admins INTEGER;
+    -- Se usa el tipo ENUM directamente, ya que está definido en el esquema.
+    v_rol_a_eliminar rol_grupo;
+BEGIN
+    -- Verificar si el grupo existe
+    IF NOT EXISTS (SELECT 1 FROM Grupo WHERE nombre_grupo = p_nombre_grupo) THEN
+        RAISE EXCEPTION 'Error: El grupo % no existe.', p_nombre_grupo;
+    END IF;
+
+    -- Verificar si el miembro existe
+    IF NOT EXISTS (SELECT 1 FROM Miembro WHERE correo_electronico = p_correo_miembro) THEN
+        RAISE EXCEPTION 'Error: El miembro % no existe.', p_correo_miembro;
+    END IF;
+
+    IF UPPER(p_accion) = 'ANADIR' THEN
+        -- Corregidos nombres de columnas (nombre_grupo, correo_miembro)
+        INSERT INTO Pertenece (nombre_grupo, correo_miembro, rol_en_grupo, fecha_ingreso)
+        VALUES (p_nombre_grupo, p_correo_miembro, p_rol_en_grupo, CURRENT_DATE)
+        -- Corregidos nombres de columnas en ON CONFLICT
+        ON CONFLICT (nombre_grupo, correo_miembro) DO UPDATE
+        SET rol_en_grupo = p_rol_en_grupo, fecha_ingreso = CURRENT_DATE;
+
+    ELSIF UPPER(p_accion) = 'ELIMINAR' THEN
+        
+        -- Corregidos nombres de columnas (nombre_grupo, correo_miembro)
+        SELECT rol_en_grupo INTO v_rol_a_eliminar
+        FROM Pertenece
+        WHERE nombre_grupo = p_nombre_grupo AND correo_miembro = p_correo_miembro;
+
+        IF v_rol_a_eliminar IS NULL THEN
+            RAISE EXCEPTION 'El miembro % no pertenece al grupo %.', p_correo_miembro, p_nombre_grupo;
+        END IF;
+
+        -- Restricción: 'Todo grupo debe tener al menos un administrador'
+        IF v_rol_a_eliminar = 'administrador' THEN
+            SELECT COUNT(*) INTO v_conteo_admins
+            FROM Pertenece
+            WHERE 
+                nombre_grupo = p_nombre_grupo AND 
+                rol_en_grupo = 'administrador' AND
+                correo_miembro != p_correo_miembro; -- Contar otros administradores
+
+            IF v_conteo_admins < 1 THEN
+                RAISE EXCEPTION 'Restricción de Grupo: No se puede eliminar al último administrador del grupo %.', p_nombre_grupo;
+            END IF;
+        END IF;
+        
+        -- Corregidos nombres de columnas
+        DELETE FROM Pertenece
+        WHERE nombre_grupo = p_nombre_grupo AND correo_miembro = p_correo_miembro;
+
+    ELSE
+        RAISE EXCEPTION 'Acción inválida: %. Debe ser ''ANADIR'' o ''ELIMINAR''.', p_accion;
+    END IF;
+
+    -- Se elimina el COMMIT explícito, ya que PostgreSQL maneja las transacciones automáticamente en los procedimientos.
+END;
+$$;
+
+
+
+
+
+-- VALENTINA
+--FUNCTION
+
+CREATE OR REPLACE FUNCTION recomendar_ofertas(
+    p_correo_persona VARCHAR(255)
+)
+RETURNS TABLE (
+    nombre_cargo VARCHAR(255),
+    correo_publicador VARCHAR(255),
+    nombre_organizacion VARCHAR(255),
+    coincidencia_carreras BIGINT,
+    fecha_publicacion DATE
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    WITH CarrerasDelMiembro AS (
+        -- 1. Obtener todas las carreras que la persona ha estudiado (a través de Periodo_Educativo)
+        SELECT 
+            id_carrera
+        FROM 
+            Periodo P
+        JOIN 
+            Periodo_Educativo PE ON P.id_periodo = PE.id_periodo AND P.correo_persona = PE.correo_persona
+        WHERE 
+            P.correo_persona = p_correo_persona
+    )
+    SELECT
+        OT.nombre_cargo,
+        OT.correo_publicador,
+        ORG.nombre_organizacion,
+        COUNT(DISTINCT E.nombre_carrera) AS coincidencia_carreras,
+        OT.fecha_publicacion
+    FROM
+        Oferta_Trabajo OT
+    JOIN
+        Organizacion ORG ON OT.correo_publicador = ORG.correo_electronico
+    JOIN
+        Etiqueta E ON OT.correo_publicador = E.correo_publicador AND OT.nombre_cargo = E.nombre_cargo
+    JOIN
+        CarrerasDelMiembro CDM ON E.nombre_carrera = CDM.id_carrera
+    WHERE
+        -- 2. Asegurar que la oferta esté activa
+        OT.estado_oferta = 'abierta'
+        -- 3. Excluir ofertas a las que ya ha aplicado (Opcional, pero útil)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM Aplica A
+            WHERE 
+                A.correo_aplicante = p_correo_persona
+                AND A.correo_publicador = OT.correo_publicador
+                AND A.nombre_cargo = OT.nombre_cargo
+        )
+    GROUP BY
+        OT.nombre_cargo,
+        OT.correo_publicador,
+        ORG.nombre_organizacion,
+        OT.fecha_publicacion
+    ORDER BY
+        coincidencia_carreras DESC,  -- Priorizar las ofertas con más carreras coincidentes
+        OT.fecha_publicacion DESC   -- Luego, las más recientes
+    LIMIT 15; -- Mostrar un máximo de 15 recomendaciones
+END;
+$$;
+
+
+--USO FUNCTION
+
+--SELECT * FROM recomendar_ofertas('persona@ucab.edu.ve');
+
+
+
+
+--CONSTRAINT 
+
+-- para todo periodo, debe existir un periodo_educativo o periodo_experiencia, pero no ambos
+
+CREATE OR REPLACE FUNCTION verificar_tipo_periodo_unico()
+RETURNS TRIGGER AS $$
+DECLARE
+    -- Contadores para verificar la existencia en ambas tablas.
+    v_conteo_educativo INTEGER;
+    v_conteo_experiencia INTEGER;
+BEGIN
+    -- Contar cuántas veces la clave primaria compuesta existe en Periodo_Educativo
+    SELECT COUNT(*)
+    INTO v_conteo_educativo
+    FROM Periodo_Educativo
+    WHERE id_periodo = NEW.id_periodo AND correo_persona = NEW.correo_persona;
+
+    -- Contar cuántas veces la clave primaria compuesta existe en Periodo_Experiencia
+    SELECT COUNT(*)
+    INTO v_conteo_experiencia
+    FROM Periodo_Experiencia
+    WHERE id_periodo = NEW.id_periodo AND correo_persona = NEW.correo_persona;
+
+    -- La suma total de referencias debe ser exactamente 1. 
+    -- Si es 2, significa que existe en ambas tablas, lo cual viola la exclusividad.
+    IF (v_conteo_educativo + v_conteo_experiencia) > 1 THEN
+        RAISE EXCEPTION 'Restricción de Período Violada: El período con id %s del miembro %s ya está registrado como el otro tipo de período (Educativo o Experiencia). Solo puede ser uno de los dos.', 
+            NEW.id_periodo, NEW.correo_persona;
+    END IF;
+
+    -- Si la suma es 1 (solo existe en la tabla que disparó el trigger), la operación es válida.
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Aplica la restricción a Periodo_Educativo
+CREATE CONSTRAINT TRIGGER tr_periodo_educativo_unico
+AFTER INSERT OR UPDATE ON Periodo_Educativo
+DEFERRABLE INITIALLY DEFERRED -- Crucial para manejar transacciones complejas
+FOR EACH ROW
+EXECUTE FUNCTION verificar_tipo_periodo_unico();
+
+-- Aplica la restricción a Periodo_Experiencia
+CREATE CONSTRAINT TRIGGER tr_periodo_experiencia_unico
+AFTER INSERT OR UPDATE ON Periodo_Experiencia
+DEFERRABLE INITIALLY DEFERRED -- Crucial para manejar transacciones complejas
+FOR EACH ROW
+EXECUTE FUNCTION verificar_tipo_periodo_unico();
+
+--Fecha Inicio menor que fecha fin
+
+ALTER TABLE Periodo
+ADD CONSTRAINT check_fecha_inicio_menor_que_fin
+CHECK (
+    fecha_inicio <= fecha_fin
+    -- Se permite fecha_fin NULL (periodo en curso)
+    OR fecha_fin IS NULL
+);
+
+
+--numeros no negativos 
+ALTER TABLE Publicacion
+ADD CONSTRAINT check_contadores_no_negativos
+CHECK (
+    total_likes >= 0 AND total_comen >= 0
+);
