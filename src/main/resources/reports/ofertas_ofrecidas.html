@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Ofertas Ofrecidas</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 40px; }
+        h1 { color: #005A9C; text-align: center; border-bottom: 2px solid #005A9C; padding-bottom: 10px; }
+        h2 { color: #008CBA; margin-top: 30px; border-left: 5px solid #008CBA; padding-left: 10px; }
+        .header-info { margin-bottom: 30px; text-align: center; font-size: 0.9em; color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; color: #005A9C; font-weight: bold; }
+        tr:hover { background-color: #f9f9f9; }
+        .empty-message { font-style: italic; color: #888; padding: 10px; text-align: center; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; color: white; }
+        .badge-abierta { background-color: #28a745; }
+        .badge-cerrada { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>Ofertas Ofrecidas</h1>
+    
+    <div class="header-info">
+        <p><strong>Organización:</strong> {{nombre_organizacion}} <span class="badge badge-abierta" style="background-color: #008CBA;">{{tipo_organizacion}}</span></p>
+        <p><strong>Correo:</strong> {{correo}}</p>
+        <p><strong>Fecha de Generación:</strong> {{fecha_generacion}}</p>
+    </div>
+
+    {{#if ofertas}}
+    <table>
+        <thead>
+            <tr>
+                <th>Cargo</th>
+                <th>Tipo</th>
+                <th>Modalidad</th>
+                <th>Ubicación</th>
+                <th>Fecha Pub.</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each ofertas}}
+            <tr>
+                <td>{{cargo}}</td>
+                <td>{{tipo_cargo}}</td>
+                <td>{{modalidad}}</td>
+                <td>{{ubicacion}}</td>
+                <td>{{fecha_publicacion}}</td>
+                <td>
+                    <span class="badge badge-{{estado}}">{{estado}}</span>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{else}}
+    <div class="empty-message">Esta organización no tiene ofertas de trabajo registradas actualmente.</div>
+    {{/if}}
+
+</body>
+</html>
