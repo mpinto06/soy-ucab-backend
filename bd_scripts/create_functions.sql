@@ -59,9 +59,9 @@ CREATE TABLE Persona (
     segundo_nombre VARCHAR(50),
     primer_apellido VARCHAR(50) NOT NULL,
     segundo_apellido VARCHAR(50),
-    fecha_nacimiento DATE NOT NULL,
-    sexo tipo_sexo NOT NULL,
-    ubicacion_geografica VARCHAR(255) NOT NULL,
+    fecha_nacimiento DATE,
+    sexo tipo_sexo,
+    ubicacion_geografica VARCHAR(255),
     FOREIGN KEY (correo_electronico) REFERENCES Miembro(correo_electronico)
 );
 
