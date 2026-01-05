@@ -4,8 +4,10 @@ import com.ucab.soy_ucab_backend.dto.auth.AuthResponseDto;
 import com.ucab.soy_ucab_backend.dto.auth.LoginRequestDto;
 import com.ucab.soy_ucab_backend.dto.auth.RegisterOrgRequestDto;
 import com.ucab.soy_ucab_backend.dto.auth.RegisterUserRequestDto;
+import com.ucab.soy_ucab_backend.model.DependenciaUCAB;
 import com.ucab.soy_ucab_backend.model.Miembro;
 import com.ucab.soy_ucab_backend.model.Organizacion;
+import com.ucab.soy_ucab_backend.model.OrganizacionAsociada;
 import com.ucab.soy_ucab_backend.model.Persona;
 import com.ucab.soy_ucab_backend.repository.MiembroRepository;
 import com.ucab.soy_ucab_backend.repository.OrganizacionRepository;
@@ -45,8 +47,18 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
 
-        // Return simple token (userId/email) as per simplified requirement
-        return new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), miembro.getEmail());
+        String memberType = "Miembro";
+        if (miembro instanceof Persona) {
+            memberType = "Persona";
+        } else if (miembro instanceof DependenciaUCAB) {
+            memberType = "DependenciaUCAB";
+        } else if (miembro instanceof OrganizacionAsociada) {
+            memberType = "OrganizacionAsociada";
+        } else if (miembro instanceof Organizacion) {
+            memberType = "Organizacion";
+        }
+
+        return new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType, miembro);
     }
 
     public AuthResponseDto registerUser(RegisterUserRequestDto request) {
@@ -58,14 +70,13 @@ public class AuthService {
         persona.setEmail(request.getEmail());
         persona.setPassword(passwordEncoder.encode(request.getPassword()));
         persona.setFirstName(request.getFirstName());
-        persona.setLastName(request.getLastName()); // Default for now if not in DTO
-        // Optional fields
+        persona.setLastName(request.getLastName());
         if(request.getBirthDate() != null) persona.setBirthDate(request.getBirthDate());
         if(request.getGender() != null) persona.setGender(request.getGender());
         
         personaRepository.save(persona);
 
-        return new AuthResponseDto(persona.getEmail(), persona.getRole().name(), persona.getEmail());
+        return new AuthResponseDto(persona.getEmail(), persona.getRole().name(), "Persona", persona);
     }
 
     public AuthResponseDto registerOrg(RegisterOrgRequestDto request) {
@@ -76,15 +87,11 @@ public class AuthService {
         Organizacion org = new Organizacion();
         org.setEmail(request.getEmail());
         org.setPassword(passwordEncoder.encode(request.getPassword()));
-        org.setName(request.getOrgName() != null ? request.getOrgName() : request.getEmail()); // Fallback
+        org.setName(request.getOrgName() != null ? request.getOrgName() : request.getEmail());
         org.setDescription(request.getDescription());
-        
-        // Note: Logic for 'Dependencia_UCAB' vs 'Organizacion_Asociada' tables (subclasses) 
-        // would go here if we were implementing the full inheritance mapping. 
-        // For now, saving as base Organizacion.
         
         organizacionRepository.save(org);
 
-        return new AuthResponseDto(org.getEmail(), org.getRole().name(), org.getEmail());
+        return new AuthResponseDto(org.getEmail(), org.getRole().name(), "Organizacion", org);
     }
 }

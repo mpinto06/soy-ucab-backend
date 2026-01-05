@@ -1,12 +1,18 @@
 package com.ucab.soy_ucab_backend.dto.auth;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class AuthResponseDto {
     private String email;
     private String role;
-    private String token; // Can be dummy for now or just userId
+    private String memberType;
+    private Object memberDetails;
+
+    public AuthResponseDto(String email, String role, String memberType, Object memberDetails) {
+        this.email = email;
+        this.role = role;
+        this.memberType = memberType;
+        this.memberDetails = memberDetails;
+    }
 }
