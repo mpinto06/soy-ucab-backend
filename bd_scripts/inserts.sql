@@ -2,14 +2,14 @@
 
 -- Miembros
 INSERT INTO Miembro (correo_electronico, hash_contrasena, encabezado_perfil, privacidad_mensajes) VALUES
-('miguel@ucab.edu.ve', 'hash123', 'Estudiante de Ingeniería', 'cualquiera'),
-('maria@ucab.edu.ve', 'hash456', 'Delegada de curso', 'solo_amigos'),
-('jose@ucab.edu.ve', 'hash789', 'Programador Junior', 'cualquiera'),
-('arturo@ucab.edu.ve', 'hash789', 'Programador Junior', 'cualquiera'),
-('ingenieria@ucab.edu.ve', 'hash789', 'Facultad de Ingeniería', 'nadie'),
-('informatica@ucab.edu.ve', 'hashabc', 'Escuela de Informática', 'cualquiera'),
-('civil@ucab.edu.ve', 'hash_civil', 'Escuela de Ingeniería Civil', 'cualquiera'),
-('google@empresa.com', 'hashxyz', 'Tech Company', 'cualquiera');
+('miguel@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Estudiante de Ingeniería', 'cualquiera'),
+('maria@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Delegada de curso', 'solo_amigos'),
+('jose@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Programador Junior', 'cualquiera'),
+('arturo@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Programador Junior', 'cualquiera'),
+('ingenieria@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Facultad de Ingeniería', 'nadie'),
+('informatica@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Escuela de Informática', 'cualquiera'),
+('civil@ucab.edu.ve', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Escuela de Ingeniería Civil', 'cualquiera'),
+('google@empresa.com', '$2a$10$XXbfvzXW6Vp7Nr62h0RTWehJCT2PoRWWAca5rX0GXi0zLm3Qxjr3e', 'Tech Company', 'cualquiera');
 
 
 -- Personas
