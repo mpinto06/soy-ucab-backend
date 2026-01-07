@@ -28,5 +28,5 @@ public class Persona extends Miembro {
     private String gender; // 'M' or 'F' (using String for simplicity mapping PG Enum, could be Enum)
     
     @Column(name = "ubicacion_geografica")
-    private String location = "Unknown"; // Default
+    private String location;
 }

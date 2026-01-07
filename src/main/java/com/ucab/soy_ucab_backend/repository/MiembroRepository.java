@@ -9,4 +9,7 @@ import java.util.Optional;
 @Repository
 public interface MiembroRepository extends JpaRepository<Miembro, String> {
     Optional<Miembro> findByEmail(String email);
+
+    @org.springframework.data.jpa.repository.Query(value = "SELECT COUNT(*) FROM Sigue WHERE correo_seguido = :email", nativeQuery = true)
+    long countFollowers(@org.springframework.data.repository.query.Param("email") String email);
 }
