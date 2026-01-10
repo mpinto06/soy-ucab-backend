@@ -587,6 +587,46 @@ BEGIN
 END;
 $$;
 
+
+CREATE OR REPLACE PROCEDURE actualizar_correo_seguro(
+    p_correo_actual VARCHAR,
+    p_correo_nuevo VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Verificar si el nuevo correo ya existe en Miembro
+    IF EXISTS (SELECT 1 FROM Miembro WHERE correo_electronico = p_correo_nuevo) THEN
+        RAISE EXCEPTION 'El correo % ya está en uso por otro miembro.', p_correo_nuevo;
+    END IF;
+
+    -- Eliminar temporalmente la restricción de orden en Es_Amigo
+    ALTER TABLE Es_Amigo DROP CONSTRAINT chk_orden_correos;
+
+    -- Actualizar el correo principal
+    UPDATE Miembro 
+    SET correo_electronico = p_correo_nuevo 
+    WHERE correo_electronico = p_correo_actual;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'El usuario con correo % no existe.', p_correo_actual;
+    END IF;
+
+    -- Corregir el orden en Es_Amigo
+    UPDATE Es_Amigo
+    SET correo_persona1 = LEAST(correo_persona1, correo_persona2),
+        correo_persona2 = GREATEST(correo_persona1, correo_persona2)
+    WHERE correo_persona1 > correo_persona2;
+
+    -- Restaurar la restricción de seguridad
+    ALTER TABLE Es_Amigo 
+    ADD CONSTRAINT chk_orden_correos 
+    CHECK (correo_persona1 < correo_persona2);
+
+    RAISE NOTICE 'Correo actualizado exitosamente de % a %.', p_correo_actual, p_correo_nuevo;
+END;
+$$;
+
 -- FUNCIONES
 CREATE OR REPLACE FUNCTION son_amigos(usuario_a VARCHAR, usuario_b VARCHAR)
 RETURNS BOOLEAN AS $$
@@ -695,6 +735,14 @@ ALTER TABLE Sigue
 ADD CONSTRAINT chk_no_auto_seguimiento 
 CHECK (correo_seguidor <> correo_seguido);
 
+-- Nuevo constraint para garantizar que haya carrera o estudio
+ALTER TABLE Periodo_Educativo
+ADD CONSTRAINT check_origen_educativo_exclusivo
+CHECK (
+    (id_carrera IS NOT NULL AND nombre_estudio IS NULL) 
+    OR 
+    (id_carrera IS NULL AND nombre_estudio IS NOT NULL)
+);
 
 
 
