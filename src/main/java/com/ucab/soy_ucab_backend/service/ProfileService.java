@@ -196,6 +196,18 @@ public class ProfileService {
             if (vNombreEstudio != null && vNombreEstudio.isBlank()) vNombreEstudio = null;
             p.setNombreEstudio(vNombreEstudio);
             
+            // File Handling
+            if (periodDto.fileBase64() != null && !periodDto.fileBase64().isBlank()) {
+                try {
+                    String b64 = periodDto.fileBase64();
+                    if (b64.contains(",")) b64 = b64.split(",")[1];
+                    p.setArchivoCertificado(java.util.Base64.getDecoder().decode(b64));
+                    p.setFormatoArchivo(periodDto.fileFormat());
+                } catch (Exception e) {
+                    // Ignore or log
+                }
+            }
+
             periodoEducativoRepository.save(p);
         } else if ("professional".equalsIgnoreCase(periodDto.type())) {
             PeriodoExperiencia p = new PeriodoExperiencia();
@@ -209,6 +221,18 @@ public class ProfileService {
             p.setCorreoOrganizacion(periodDto.organization()); // Assuming org is passed as string identifier or name
             p.setTipoCargo(periodDto.positionType());
             p.setCargo(periodDto.position());
+
+            // File Handling
+            if (periodDto.fileBase64() != null && !periodDto.fileBase64().isBlank()) {
+                try {
+                    String b64 = periodDto.fileBase64();
+                    if (b64.contains(",")) b64 = b64.split(",")[1];
+                    p.setArchivoCarta(java.util.Base64.getDecoder().decode(b64));
+                    p.setFormatoArchivo(periodDto.fileFormat());
+                } catch (Exception e) {
+                    // Ignore or log
+                }
+            }
 
             periodoExperienciaRepository.save(p);
         } else {

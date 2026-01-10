@@ -18,5 +18,9 @@ public record PeriodDto(
     // Professional specific
     String organization,
     String positionType,
-    String position
+    String position,
+    
+    // File upload
+    String fileBase64,
+    String fileFormat
 ) {}
