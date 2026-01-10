@@ -30,6 +30,11 @@ public class OfertasAplicadasService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public byte[] generateOfertasReport(String email) throws IOException {
+        Map<String, Object> data = getOfertasData(email);
+        return generateReportPdf("ofertas_report.html", data);
+    }
+
+    public Map<String, Object> getOfertasData(String email) {
         // Validate if user is an Organization
         String countSql = "SELECT COUNT(*) FROM Organizacion WHERE correo_electronico = ?";
         Integer count = jdbcTemplate.queryForObject(countSql, Integer.class, email);
@@ -51,6 +56,7 @@ public class OfertasAplicadasService {
                 SELECT o.nombre_organizacion as empresa, ot.nombre_cargo as cargo,
                        CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.modalidad AS text) as modalidad,
                        ot.ubicacion, ot.descripcion_cargo, TO_CHAR(ot.fecha_publicacion, 'DD Mon YYYY') as fecha_publicacion,
+                       ot.correo_publicador as publicador_email,
                        m.archivo_foto, m.formato_foto
                 FROM Guarda g
                 JOIN Oferta_Trabajo ot ON g.correo_publicador = ot.correo_publicador AND g.nombre_cargo = ot.nombre_cargo
@@ -67,6 +73,7 @@ public class OfertasAplicadasService {
                        CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.estado_oferta AS text) as estado,
                        TO_CHAR(a.fecha_aplicacion, 'DD Mon YYYY') as fecha_aplicacion,
                        ot.ubicacion, ot.descripcion_cargo, CAST(ot.modalidad AS text) as modalidad,
+                       ot.correo_publicador as publicador_email,
                        m.archivo_foto, m.formato_foto
                 FROM Aplica a
                 JOIN Oferta_Trabajo ot ON a.correo_publicador = ot.correo_publicador AND a.nombre_cargo = ot.nombre_cargo
@@ -87,8 +94,7 @@ public class OfertasAplicadasService {
         data.put("guardadas", savedOffers);
         data.put("aplicadas", appliedOffers);
 
-        // 5. Generate PDF
-        return generateReportPdf("ofertas_report.html", data);
+        return data;
     }
 
     private void processOffers(List<Map<String, Object>> offers) {
@@ -157,4 +163,5 @@ public class OfertasAplicadasService {
 
         return response.getBody();
     }
+
 }
