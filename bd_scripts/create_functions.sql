@@ -435,6 +435,13 @@ CREATE TABLE Muestra_Interes (
     FOREIGN KEY (nombre_evento) REFERENCES Evento(nombre_evento) ON UPDATE CASCADE
 );
 
+-- TABLA NUEVA: Catálogo oficial de la universidad
+CREATE TABLE Catalogo_Oficial_UCAB (
+    id_catalogo SERIAL PRIMARY KEY,
+    nombre_escuela VARCHAR(255) UNIQUE NOT NULL,
+    nombre_facultad VARCHAR(255) NOT NULL
+);
+
 ALTER TABLE Miembro ENABLE ROW LEVEL SECURITY;
 ALTER TABLE Mensaje ENABLE ROW LEVEL SECURITY;
 ALTER TABLE Publicacion ENABLE ROW LEVEL SECURITY;

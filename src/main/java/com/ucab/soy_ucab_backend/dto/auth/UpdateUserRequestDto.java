@@ -13,5 +13,6 @@ public record UpdateUserRequestDto(
     String profileImageBase64,
     String imageFormat,
     String imageName,
-    String newEmail
+    String newEmail,
+    String description
 ) {}

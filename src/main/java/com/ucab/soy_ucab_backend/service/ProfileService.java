@@ -109,6 +109,7 @@ public class ProfileService {
         } else if (miembro instanceof Organizacion) {
             Organizacion o = (Organizacion) miembro;
             if (request.firstName() != null) o.setName(request.firstName());
+            if (request.description() != null) o.setDescription(request.description());
             organizacionRepository.save(o);
         } else {
              miembroRepository.save(miembro);

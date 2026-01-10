@@ -279,3 +279,11 @@ INSERT INTO Muestra_Interes (correo_miembro, nombre_evento)
 VALUES ('maria@ucab.edu.ve', 'Hackathon 2025'),
 ('miguel@ucab.edu.ve', 'Hackathon 2025'),
 ('miguel@ucab.edu.ve', 'Hackathon 2026');
+
+INSERT INTO Catalogo_Oficial_UCAB (nombre_escuela, nombre_facultad) VALUES 
+('Escuela de Ingeniería Informática', 'Facultad de Ingeniería'),
+('Escuela de Ingeniería Civil', 'Facultad de Ingeniería'),
+('Escuela de Ingeniería Industrial', 'Facultad de Ingeniería'),
+('Escuela de Comunicación Social', 'Facultad de Humanidades y Educación'),
+('Escuela de Psicología', 'Facultad de Humanidades y Educación'),
+('Escuela de Derecho', 'Facultad de Derecho');
