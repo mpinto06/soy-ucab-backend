@@ -40,5 +40,26 @@ public class Miembro {
     @Column(name = "nombre_interes")
     private java.util.List<String> interests;
 
+    @Column(name = "privacidad_mensajes")
+    private String privacidadMensajes; // "cualquiera", "solo_amigos", "nadie" - handling as String for simplicity or create Enum
+
+    @Column(name = "notif_publicaciones")
+    private Boolean notifPublicaciones = true;
+
+    @Column(name = "notif_eventos")
+    private Boolean notifEventos = true;
+
+    @Column(name = "notif_seguidores")
+    private Boolean notifSeguidores = true;
+
+    @Column(name = "notif_amigos")
+    private Boolean notifAmigos = true;
+
+    @Column(name = "notif_interacciones")
+    private Boolean notifInteracciones = true;
+
+    @Column(name = "notif_ofertas")
+    private Boolean notifOfertas = true;
+
     // Other fields can be ignored for auth basics
 }

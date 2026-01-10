@@ -53,7 +53,9 @@ CREATE TABLE Miembro (
     notif_publicaciones BOOLEAN DEFAULT TRUE,
     notif_eventos BOOLEAN DEFAULT TRUE,
     notif_seguidores BOOLEAN DEFAULT TRUE,
-    notif_amigos BOOLEAN DEFAULT TRUE
+    notif_amigos BOOLEAN DEFAULT TRUE,
+    notif_interacciones BOOLEAN DEFAULT TRUE,
+    notif_ofertas BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE Persona (
