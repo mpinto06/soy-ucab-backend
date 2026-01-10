@@ -596,6 +596,120 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION obtener_feed_filtrado(
+    p_correo_usuario VARCHAR,
+    p_pagina INTEGER,
+    p_tamano_pagina INTEGER,
+    p_busqueda VARCHAR DEFAULT NULL,
+    p_filtro_intereses BOOLEAN DEFAULT TRUE, -- Default True como pediste
+    p_filtro_amigos BOOLEAN DEFAULT TRUE,    
+    p_filtro_seguidos BOOLEAN DEFAULT TRUE,  
+    p_filtro_grupos BOOLEAN DEFAULT TRUE,
+    p_filtro_propios BOOLEAN DEFAULT TRUE,    
+    p_orden_asc BOOLEAN DEFAULT FALSE
+)
+RETURNS TABLE (
+    id_pub VARCHAR,
+    autor_id VARCHAR,
+    autor_nombre VARCHAR,
+    autor_foto BYTEA,
+    autor_encabezado VARCHAR,
+    grupo VARCHAR,
+    texto VARCHAR,
+    fecha TIMESTAMPTZ,
+    likes INTEGER,
+    comentarios INTEGER,
+    total_registros BIGINT
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_offset INTEGER;
+BEGIN
+    v_offset := (p_pagina - 1) * p_tamano_pagina;
+
+    RETURN QUERY
+    SELECT 
+        p.id_publicacion,
+        p.correo_autor,
+        -- Logic to get display name (Person or Org)
+        COALESCE(
+            (per.primer_nombre || ' ' || per.primer_apellido),
+            org.nombre_organizacion,
+            p.correo_autor -- Fallback
+        )::VARCHAR AS autor_nombre,
+        m.archivo_foto,
+        m.encabezado_perfil,
+        
+        p.id_grupo,
+        p.texto_pub,
+        p.fecha_hora,
+        p.total_likes,
+        p.total_comen,
+        COUNT(*) OVER() AS total_registros
+    FROM 
+        Publicacion p
+    LEFT JOIN Miembro m ON p.correo_autor = m.correo_electronico
+    LEFT JOIN Persona per ON p.correo_autor = per.correo_electronico
+    LEFT JOIN Organizacion org ON p.correo_autor = org.correo_electronico
+    WHERE 
+        -- 1. Filtro de Texto (Buscador)
+        (p_busqueda IS NULL OR p.texto_pub ILIKE '%' || p_busqueda || '%')
+        
+        AND (
+            -- 2. Lógica Aditiva (OR)
+            -- Si el checkbox está activo, evalúa la condición. Si se cumple, entra al feed.
+            
+            -- A. Filtro Amigos
+            (p_filtro_amigos AND EXISTS (
+                SELECT 1 FROM Es_Amigo ea 
+                WHERE (ea.correo_persona1 = p_correo_usuario AND ea.correo_persona2 = p.correo_autor) 
+                   OR (ea.correo_persona2 = p_correo_usuario AND ea.correo_persona1 = p.correo_autor)
+            ))
+            
+            OR
+            
+            -- B. Filtro Seguidos
+            (p_filtro_seguidos AND EXISTS (
+                SELECT 1 FROM Sigue s 
+                WHERE s.correo_seguidor = p_correo_usuario AND s.correo_seguido = p.correo_autor
+            ))
+
+            OR
+
+            -- C. Filtro Grupos (Muestra posts de grupos donde SOY miembro)
+            (p_filtro_grupos AND p.id_grupo IS NOT NULL AND EXISTS (
+                SELECT 1 FROM Pertenece pert 
+                WHERE pert.nombre_grupo = p.id_grupo AND pert.correo_miembro = p_correo_usuario
+            ))
+
+            OR 
+
+            -- D. Filtro Intereses (Coincidencia de temas)
+            (p_filtro_intereses AND EXISTS (
+                SELECT 1 
+                FROM Trata_Sobre ts 
+                JOIN Expresa ex ON ts.nombre_interes = ex.nombre_interes
+                WHERE ts.id_publicacion = p.id_publicacion 
+                  AND ex.correo_miembro = p_correo_usuario
+            ))
+            
+            OR
+            
+            -- E. Propio Usuario
+            (p_filtro_propios AND p.correo_autor = p_correo_usuario)
+        )
+    ORDER BY 
+        CASE WHEN p_orden_asc THEN p.fecha_hora END ASC,
+        CASE WHEN NOT p_orden_asc THEN p.fecha_hora END DESC
+    LIMIT 
+        p_tamano_pagina
+    OFFSET 
+        v_offset;
+END;
+$$;
+
 
 CREATE OR REPLACE PROCEDURE actualizar_correo_seguro(
     p_correo_actual VARCHAR,
