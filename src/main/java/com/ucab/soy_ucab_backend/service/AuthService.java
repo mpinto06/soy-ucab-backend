@@ -13,6 +13,8 @@ import com.ucab.soy_ucab_backend.repository.OrganizacionRepository;
 import com.ucab.soy_ucab_backend.repository.PersonaRepository;
 import com.ucab.soy_ucab_backend.repository.PeriodoEducativoRepository;
 import com.ucab.soy_ucab_backend.repository.PeriodoExperienciaRepository;
+import com.ucab.soy_ucab_backend.repository.SigueRepository;
+import com.ucab.soy_ucab_backend.repository.EsAmigoRepository;
 
 import com.ucab.soy_ucab_backend.repository.CarreraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,12 @@ public class AuthService {
 
     @Autowired
     private PeriodoExperienciaRepository periodoExperienciaRepository;
+
+    @Autowired
+    private SigueRepository sigueRepository;
+
+    @Autowired
+    private EsAmigoRepository esAmigoRepository;
 
     @Autowired
     private CarreraRepository carreraRepository;
@@ -98,7 +106,7 @@ public class AuthService {
     }
 
     public AuthResponseDto buildAuthResponse(Miembro miembro) {
-        long followersCount = 0; // segueRepository.countByCorreoSeguido(miembro.getEmail()); 
+        long followersCount = sigueRepository.countByFollowedEmail(miembro.getEmail()); 
         Long friendsCount = null;
         String profileImage = null;
         String memberType = miembro instanceof Persona ? "Persona" : (miembro instanceof Organizacion ? "Organizacion" : "Miembro");
@@ -132,6 +140,7 @@ public class AuthService {
             }
             professionalPeriods = periodoExperienciaRepository.findByCorreoPersona(miembro.getEmail());
             location = ((Persona) miembro).getLocation();
+            friendsCount = esAmigoRepository.countFriendsByEmail(miembro.getEmail());
         }
 
         return new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType, miembro, followersCount, friendsCount, profileImage, miembro.getEncabezadoPerfil(), academicPeriods, professionalPeriods, location, miembro.getInterests());
