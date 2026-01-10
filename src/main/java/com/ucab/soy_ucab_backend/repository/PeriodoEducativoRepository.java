@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface PeriodoEducativoRepository extends JpaRepository<PeriodoEducativo, PeriodoId> {
     List<PeriodoEducativo> findByCorreoPersona(String correoPersona);
+    java.util.Optional<PeriodoEducativo> findByCorreoPersonaAndIdPeriodo(String correoPersona, String idPeriodo);
 }

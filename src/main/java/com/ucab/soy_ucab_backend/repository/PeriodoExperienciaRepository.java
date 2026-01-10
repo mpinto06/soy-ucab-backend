@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface PeriodoExperienciaRepository extends JpaRepository<PeriodoExperiencia, PeriodoId> {
     List<PeriodoExperiencia> findByCorreoPersona(String correoPersona);
+    java.util.Optional<PeriodoExperiencia> findByCorreoPersonaAndIdPeriodo(String correoPersona, String idPeriodo);
 }

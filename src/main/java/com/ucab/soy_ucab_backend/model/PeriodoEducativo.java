@@ -24,4 +24,10 @@ public class PeriodoEducativo extends Periodo {
 
     @Column(name = "nombre_estudio")
     private String nombreEstudio;
+
+    @Transient
+    private String careerLevel;
+
+    @Transient
+    private String schoolName;
 }

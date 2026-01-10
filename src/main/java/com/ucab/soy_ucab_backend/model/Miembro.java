@@ -12,6 +12,7 @@ public class Miembro {
     @Column(name = "correo_electronico")
     private String email;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column(name = "hash_contrasena")
     private String password;
 
@@ -24,6 +25,9 @@ public class Miembro {
 
     @Column(name = "formato_foto")
     private String formatoFoto; // We can treat enum as String or map it properly, String is easier for read-only scenario here
+
+    @Column(name = "nombre_archivo_foto")
+    private String nombreArchivoFoto;
 
     @Column(name = "encabezado_perfil")
     private String encabezadoPerfil;

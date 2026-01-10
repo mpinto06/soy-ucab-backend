@@ -31,31 +31,4 @@ public class AuthController {
         return ResponseEntity.ok(authService.registerOrg(request));
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<AuthResponseDto> updateUser(@RequestBody com.ucab.soy_ucab_backend.dto.auth.UpdateUserRequestDto request) {
-        // TODO: Get email from SecurityContext. For now, we unfortunately need the email in the request or assume single user dev mode.
-        // Since I cannot change DTO structure easily without affecting user request logic:
-        // "This service it's going to receive a similar DTO... everything it's going to be null except for the new fields."
-        // I'll grab the email from the SecurityContext assuming JwtFilter is working and setting Authentication.
-        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(authService.updateUser(email, request));
-    }
-
-    @PostMapping("/interest/add")
-    public ResponseEntity<AuthResponseDto> addInterest(@RequestParam String interest) {
-        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(authService.addInterest(email, interest));
-    }
-
-    @PostMapping("/interest/remove")
-    public ResponseEntity<AuthResponseDto> removeInterest(@RequestParam String interest) {
-        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(authService.removeInterest(email, interest));
-    }
-
-    @DeleteMapping("/period")
-    public ResponseEntity<AuthResponseDto> deletePeriod(@RequestParam String id, @RequestParam String type) {
-        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(authService.deletePeriod(email, id, type));
-    }
 }

@@ -12,4 +12,7 @@ public interface MiembroRepository extends JpaRepository<Miembro, String> {
 
     @org.springframework.data.jpa.repository.Query(value = "SELECT COUNT(*) FROM Sigue WHERE correo_seguido = :email", nativeQuery = true)
     long countFollowers(@org.springframework.data.repository.query.Param("email") String email);
+
+    @org.springframework.data.jpa.repository.query.Procedure(procedureName = "actualizar_correo_seguro")
+    void actualizarCorreoSeguro(String p_correo_actual, String p_correo_nuevo);
 }
