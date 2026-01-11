@@ -65,7 +65,8 @@ public class FeedService {
                 p.getTexto(),
                 p.getFecha(),
                 p.getLikes(),
-                p.getComentarios()
+                p.getComentarios(),
+                Boolean.TRUE.equals(p.getMi_like())
             );
         }).toList();
 

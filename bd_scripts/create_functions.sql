@@ -619,6 +619,7 @@ RETURNS TABLE (
     fecha TIMESTAMPTZ,
     likes INTEGER,
     comentarios INTEGER,
+    mi_like BOOLEAN,
     total_registros BIGINT
 ) 
 LANGUAGE plpgsql
@@ -647,6 +648,12 @@ BEGIN
         p.fecha_hora,
         p.total_likes,
         p.total_comen,
+        EXISTS (
+            SELECT 1 FROM Me_Gusta mg 
+            WHERE mg.id_publicacion = p.id_publicacion 
+            AND mg.correo_autor_pub = p.correo_autor
+            AND mg.correo_miembro = p_correo_usuario
+        ) AS mi_like,
         COUNT(*) OVER() AS total_registros
     FROM 
         Publicacion p

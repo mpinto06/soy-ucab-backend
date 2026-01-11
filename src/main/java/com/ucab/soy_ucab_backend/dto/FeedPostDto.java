@@ -10,6 +10,7 @@ public class FeedPostDto {
     private Instant date;
     private int likes;
     private int comments;
+    private boolean liked;
 
     // Inner DTO for Author to structure the JSON nicely
     public static class AuthorDto {
@@ -35,7 +36,7 @@ public class FeedPostDto {
         public String getHeadline() { return headline; }
     }
 
-    public FeedPostDto(String id, AuthorDto author, String group, String content, Instant date, int likes, int comments) {
+    public FeedPostDto(String id, AuthorDto author, String group, String content, Instant date, int likes, int comments, boolean liked) {
         this.id = id;
         this.author = author;
         this.group = group;
@@ -43,6 +44,7 @@ public class FeedPostDto {
         this.date = date;
         this.likes = likes;
         this.comments = comments;
+        this.liked = liked;
     }
 
     // Getters
@@ -53,4 +55,5 @@ public class FeedPostDto {
     public Instant getDate() { return date; }
     public int getLikes() { return likes; }
     public int getComments() { return comments; }
+    public boolean isLiked() { return liked; }
 }

@@ -13,5 +13,6 @@ public interface FeedPostProjection {
     Instant getFecha();
     Integer getLikes();
     Integer getComentarios();
+    Boolean getMi_like();
     Long getTotal_registros();
 }
