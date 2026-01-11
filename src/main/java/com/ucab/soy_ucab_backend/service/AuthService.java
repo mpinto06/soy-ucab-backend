@@ -55,6 +55,9 @@ public class AuthService {
     private CarreraRepository carreraRepository;
 
     @Autowired
+    private com.ucab.soy_ucab_backend.repository.GrupoRepository grupoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public AuthResponseDto login(LoginRequestDto request) {
@@ -143,6 +146,14 @@ public class AuthService {
             friendsCount = esAmigoRepository.countFriendsByEmail(miembro.getEmail());
         }
 
-        return new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType, miembro, followersCount, friendsCount, profileImage, miembro.getEncabezadoPerfil(), academicPeriods, professionalPeriods, location, miembro.getInterests());
+        // Fetch Groups
+        List<com.ucab.soy_ucab_backend.model.Grupo> dbGroups = grupoRepository.findGroupsByMemberEmail(miembro.getEmail());
+        List<AuthResponseDto.GroupDto> groups = dbGroups.stream()
+            .map(g -> new AuthResponseDto.GroupDto(g.getNombre(), g.getDescripcion(), g.getTipo()))
+            .collect(java.util.stream.Collectors.toList());
+
+        AuthResponseDto response = new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType, miembro, followersCount, friendsCount, profileImage, miembro.getEncabezadoPerfil(), academicPeriods, professionalPeriods, location, miembro.getInterests());
+        response.setGroups(groups);
+        return response;
     }
 }

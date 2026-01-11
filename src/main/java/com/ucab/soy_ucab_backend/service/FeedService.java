@@ -4,6 +4,8 @@ import com.ucab.soy_ucab_backend.dto.FeedPostDto;
 import com.ucab.soy_ucab_backend.dto.FeedPostProjection;
 import com.ucab.soy_ucab_backend.dto.FeedResponseDto;
 import com.ucab.soy_ucab_backend.repository.FeedRepository;
+import com.ucab.soy_ucab_backend.repository.EncuestaRepository;
+import com.ucab.soy_ucab_backend.repository.OpcionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,15 @@ public class FeedService {
 
     @Autowired
     private FeedRepository feedRepository;
+    
+    @Autowired
+    private EncuestaRepository encuestaRepository;
+    
+    @Autowired
+    private OpcionRepository opcionRepository;
+    
+    @Autowired
+    private com.ucab.soy_ucab_backend.repository.ArchivoPublicacionRepository archivoPublicacionRepository;
 
     public FeedResponseDto getFeed(
             String email,
@@ -61,6 +72,38 @@ public class FeedService {
                 interests = Arrays.asList(p.getIntereses().split(", "));
             }
 
+            List<FeedPostDto.FileMetaDto> files = new ArrayList<>();
+            // Check existence first using the aggregated string (optimization to avoid query if empty)
+            if (p.getArchivos_str() != null && !p.getArchivos_str().isEmpty()) {
+                 List<com.ucab.soy_ucab_backend.model.ArchivoPublicacion> dbFiles = archivoPublicacionRepository.findByIdPublicacionAndCorreoAutor(p.getId_pub(), p.getAutor_id());
+                 for (com.ucab.soy_ucab_backend.model.ArchivoPublicacion file : dbFiles) {
+                     String base64 = "";
+                     if (file.getArchivo() != null) {
+                         // Determine mime type based on format
+                         String mimeType = "application/octet-stream";
+                         String fmt = file.getFormatoArchivo().toLowerCase();
+                         if (fmt.equals("jpg") || fmt.equals("jpeg")) mimeType = "image/jpeg";
+                         else if (fmt.equals("png")) mimeType = "image/png";
+                         else if (fmt.equals("mp4")) mimeType = "video/mp4";
+                         
+                         base64 = "data:" + mimeType + ";base64," + java.util.Base64.getEncoder().encodeToString(file.getArchivo());
+                     }
+                     files.add(new FeedPostDto.FileMetaDto(file.getNombreArchivo(), file.getFormatoArchivo(), base64));
+                 }
+            }
+            
+            FeedPostDto.PollDto poll = null;
+            if (Boolean.TRUE.equals(p.getTiene_encuesta())) {
+                com.ucab.soy_ucab_backend.model.Encuesta encuesta = encuestaRepository.findByIdPublicacionAndCorreoAutor(p.getId_pub(), p.getAutor_id()).orElse(null);
+                if (encuesta != null) {
+                   List<com.ucab.soy_ucab_backend.model.Opcion> opciones = opcionRepository.findByIdPublicacionAndCorreoAutor(p.getId_pub(), p.getAutor_id());
+                   List<FeedPostDto.OptionDto> optionsDto = opciones.stream()
+                        .map(o -> new FeedPostDto.OptionDto(o.getTextoOpcion(), o.getTotalVotos()))
+                        .toList();
+                   poll = new FeedPostDto.PollDto(encuesta.getFechaHoraFin().toString(), optionsDto, p.getVotoUsuario());
+                }
+            }
+
             return new FeedPostDto(
                 p.getId_pub(),
                 new FeedPostDto.AuthorDto(
@@ -75,7 +118,9 @@ public class FeedService {
                 p.getLikes(),
                 p.getComentarios(),
                 Boolean.TRUE.equals(p.getMi_like()),
-                interests
+                interests,
+                poll,
+                files
             );
         }).toList();
 

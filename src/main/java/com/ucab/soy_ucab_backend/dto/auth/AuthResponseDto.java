@@ -19,6 +19,20 @@ public class AuthResponseDto {
     private List<PeriodoExperiencia> professionalPeriods;
     private String location;
     private List<String> interests;
+    private List<GroupDto> groups;
+
+    @Data
+    public static class GroupDto {
+        private String name;
+        private String description;
+        private String type;
+        
+        public GroupDto(String name, String description, String type) {
+            this.name = name;
+            this.description = description;
+            this.type = type;
+        }
+    }
 
     public AuthResponseDto(String email, String role, String memberType, Object memberDetails, long followersCount, Long friendsCount, String profileImageBase64, String profileHeader, List<PeriodoEducativo> academicPeriods, List<PeriodoExperiencia> professionalPeriods, String location, List<String> interests) {
         this.email = email;

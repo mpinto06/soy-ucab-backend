@@ -621,6 +621,9 @@ RETURNS TABLE (
     comentarios INTEGER,
     mi_like BOOLEAN,
     intereses VARCHAR,
+    tiene_encuesta BOOLEAN,
+    voto_usuario VARCHAR,
+    archivos_str VARCHAR,
     total_registros BIGINT
 ) 
 LANGUAGE plpgsql
@@ -660,6 +663,26 @@ BEGIN
             WHERE ts.id_publicacion = p.id_publicacion
             AND ts.correo_autor = p.correo_autor
         ) AS intereses,
+        (
+            SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+            FROM Encuesta e
+            WHERE e.id_publicacion = p.id_publicacion
+            AND e.correo_autor = p.correo_autor
+        ) AS tiene_encuesta,
+        (
+            SELECT v.texto_opcion
+            FROM Vota v
+            WHERE v.id_publicacion = p.id_publicacion
+            AND v.correo_autor_encuesta = p.correo_autor
+            AND v.correo_miembro = p_correo_usuario
+            LIMIT 1
+        )::VARCHAR AS voto_usuario,
+        (
+            SELECT STRING_AGG(ap.nombre_archivo || ':' || ap.formato_archivo, ',')::VARCHAR
+            FROM Archivo_Publicacion ap
+            WHERE ap.id_publicacion = p.id_publicacion
+            AND ap.correo_autor = p.correo_autor
+        ) AS archivos_str,
         COUNT(*) OVER() AS total_registros
     FROM 
         Publicacion p
@@ -840,6 +863,41 @@ CREATE TRIGGER trigger_comentarios_update
 AFTER INSERT OR DELETE ON Comenta
 FOR EACH ROW
 EXECUTE FUNCTION actualizar_contador_comentarios();
+
+
+
+-- RESTRICCIONES DE ARCHIVOS (MAX 3)
+
+CREATE OR REPLACE FUNCTION check_max_files_publicacion()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT COUNT(*) FROM Archivo_Publicacion WHERE id_publicacion = NEW.id_publicacion AND correo_autor = NEW.correo_autor) >= 3 THEN
+        RAISE EXCEPTION 'No se pueden adjuntar más de 3 archivos a una publicación.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_check_max_files_publicacion
+BEFORE INSERT ON Archivo_Publicacion
+FOR EACH ROW
+EXECUTE FUNCTION check_max_files_publicacion();
+
+
+CREATE OR REPLACE FUNCTION check_max_files_mensaje()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT COUNT(*) FROM Archivo_Mensaje WHERE id_mensaje = NEW.id_mensaje AND correo_emisor = NEW.correo_emisor AND correo_receptor = NEW.correo_receptor) >= 3 THEN
+        RAISE EXCEPTION 'No se pueden adjuntar más de 3 archivos a un mensaje.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_check_max_files_mensaje
+BEFORE INSERT ON Archivo_Mensaje
+FOR EACH ROW
+EXECUTE FUNCTION check_max_files_mensaje();
 
 
 -- CONSTRAINTS

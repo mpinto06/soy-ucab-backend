@@ -294,6 +294,26 @@ CALL registrar_voto_encuesta(
     'Inteligencia Artificial'
 );
 
+-- ENCUESTA VENCIDA 
+INSERT INTO Publicacion (id_publicacion, correo_autor, id_grupo, texto_pub, fecha_hora) VALUES
+('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', NULL, 'Encuesta sobre electivas del periodo pasado', '2025-11-21 09:00:00');
+
+-- Registrarla como Encuesta
+INSERT INTO Encuesta (id_publicacion, correo_autor, fecha_hora_fin)
+VALUES ('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', '2025-11-30 23:59:59');
+
+-- Crear las Opciones
+INSERT INTO Opcion (id_publicacion, correo_autor, texto_opcion, total_votos) VALUES
+('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial', 2),
+('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Desarrollo Móvil', 1),
+('2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Cloud Computing', 0);
+
+-- Votos
+INSERT INTO Vota (correo_miembro, id_publicacion, correo_autor_encuesta, texto_opcion, fecha_voto) VALUES
+('miguel@ucab.edu.ve', '2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial', '2025-11-21 09:30:00'),
+('maria@ucab.edu.ve', '2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Desarrollo Móvil', '2025-11-21 10:15:00'),
+('arturo@ucab.edu.ve', '2025-11-21 09:00:00', 'informatica@ucab.edu.ve', 'Inteligencia Artificial', '2025-11-21 11:00:00');
+
 
 -- Eventos
 INSERT INTO Evento (nombre_evento, correo_organizador, descripcion, modalidad, estado_evento, ubicacion, fecha_inicio, fecha_fin) VALUES

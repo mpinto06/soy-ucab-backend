@@ -15,5 +15,8 @@ public interface FeedPostProjection {
     Integer getComentarios();
     Boolean getMi_like();
     String getIntereses();
+    Boolean getTiene_encuesta();
+    String getVotoUsuario();
+    String getArchivos_str();
     Long getTotal_registros();
 }
