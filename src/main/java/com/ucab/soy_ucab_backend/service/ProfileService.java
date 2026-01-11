@@ -269,4 +269,9 @@ public class ProfileService {
         
         return authService.buildAuthResponse(miembroRepository.findById(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
     }
+    public AuthResponseDto getUserProfile(String userId) {
+        Miembro miembro = miembroRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        return authService.buildAuthResponse(miembro);
+    }
 }

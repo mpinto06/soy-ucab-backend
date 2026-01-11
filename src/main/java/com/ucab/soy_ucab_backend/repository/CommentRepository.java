@@ -16,8 +16,8 @@ public interface CommentRepository extends JpaRepository<Comment, CommentId> {
     @Query(value = """
         SELECT c.*,
                COALESCE(p.primer_nombre || ' ' || p.primer_apellido, o.nombre_organizacion, m.correo_electronico) as autor_nombre,
-               m.archivo_foto,
-               m.encabezado_perfil
+               m.archivo_foto as autor_foto,
+               m.encabezado_perfil as autor_encabezado
         FROM Comenta c
         LEFT JOIN Miembro m ON c.correo_miembro = m.correo_electronico
         LEFT JOIN Persona p ON c.correo_miembro = p.correo_electronico

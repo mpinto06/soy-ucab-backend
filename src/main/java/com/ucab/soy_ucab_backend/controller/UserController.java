@@ -61,4 +61,9 @@ public class UserController {
     public ResponseEntity<AuthResponseDto> deletePeriod(@RequestParam String email, @RequestParam String id, @RequestParam String type) {
         return ResponseEntity.ok(profileService.deletePeriod(email, id, type));
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthResponseDto> getUserProfile(@PathVariable String id) {
+        // The id here corresponds to the email since that's the PK
+        return ResponseEntity.ok(profileService.getUserProfile(id));
+    }
 }
