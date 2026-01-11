@@ -213,13 +213,43 @@ INSERT INTO Grupo (nombre_grupo, descripcion, tipo_grupo, correo_creador) VALUES
 -- Pertenece
 INSERT INTO Pertenece (nombre_grupo, correo_miembro, rol_en_grupo) VALUES
 ('Devs UCAB', 'miguel@ucab.edu.ve', 'administrador'),
-('Devs UCAB', 'maria@ucab.edu.ve', 'participante');
+('Devs UCAB', 'maria@ucab.edu.ve', 'participante'),
+('Devs UCAB', 'informatica@ucab.edu.ve', 'moderador');
 
--- Publicacion
 INSERT INTO Publicacion (id_publicacion, correo_autor, id_grupo, texto_pub) VALUES
 ('2025-11-20 16:45:12', 'miguel@ucab.edu.ve', 'Devs UCAB', '¿Alguien sabe cuándo es la entrega?'),
-('2025-11-22 10:00:00', 'maria@ucab.edu.ve', NULL, '¡Por fin terminaron los parciales! A descansar un poco.'),  
-('2026-11-21 09:00:00', 'informatica@ucab.edu.ve', NULL, 'Encuesta sobre electivas');
+('2025-11-22 10:00:00', 'maria@ucab.edu.ve', NULL, '¡Por fin terminaron los parciales! A descansar un poco.'),
+('2026-11-21 09:00:00', 'informatica@ucab.edu.ve', NULL, 'Encuesta sobre electivas'),
+('2025-11-23 08:30:00', 'arturo@ucab.edu.ve', NULL, 'Buenos días a todos, ¿alguien para jugar fútbol hoy en la cancha?'),
+('2025-11-23 14:15:00', 'maria@ucab.edu.ve', NULL, 'Recuerden que hoy proyectamos Interstellar en el auditorio.'),
+('2025-11-24 09:00:00', 'miguel@ucab.edu.ve', 'Devs UCAB', 'Tengo un error en Java con Spring Boot y JPA, ayuda por favor.'),
+('2025-11-24 11:45:00', 'informatica@ucab.edu.ve', NULL, 'Recordatorio: Mañana hay mantenimiento en los laboratorios de piso 2.'),
+('2025-11-25 16:20:00', 'arturo@ucab.edu.ve', NULL, 'Vendo calculadora científica, poco uso. DM si les interesa.'),
+('2025-11-26 10:10:00', 'maria@ucab.edu.ve', NULL, 'Jornada de recolección de juguetes para Navidad en Plaza Central.'),
+('2025-11-27 13:00:00', 'miguel@ucab.edu.ve', NULL, 'Almorzando en la feria, las arepas están mundiales hoy.'),
+('2025-11-28 18:00:00', 'informatica@ucab.edu.ve', 'Devs UCAB', 'Charla sobre Ciberseguridad este viernes. Asistencia obligatoria.'),
+('2025-11-29 20:30:00', 'maria@ucab.edu.ve', 'Devs UCAB', 'Comparto este tutorial de Angular 17, está buenísimo para el proyecto.'),
+('2025-11-30 12:00:00', 'arturo@ucab.edu.ve', NULL, 'Estudiando Física II, necesito un milagro para el parcial.'),
+('2025-12-01 09:00:00', 'informatica@ucab.edu.ve', NULL, 'Encendido del árbol de Navidad en la plaza del rectorado hoy.'),
+('2025-12-02 15:45:00', 'maria@ucab.edu.ve', NULL, '¿Alguien ha visto a mi gato? Se perdió cerca de Montalbán.'),
+('2025-12-03 11:00:00', 'miguel@ucab.edu.ve', 'Devs UCAB', '¿Alguien sabe configurar el Docker para la base de datos?'),
+('2025-12-05 10:30:00', 'arturo@ucab.edu.ve', NULL, '¡Pasé todas mis materias! Modo vacaciones activado oficialmente.'),
+('2025-12-10 14:20:00', 'miguel@ucab.edu.ve', NULL, 'Buscamos bajista para banda de rock alternativo. Info al privado.'),
+('2025-12-15 08:00:00', 'maria@ucab.edu.ve', NULL, 'Comprando los estrenos en el centro, ¿dónde hay ofertas?'),
+('2025-12-24 23:55:00', 'miguel@ucab.edu.ve', NULL, '¡Feliz Navidad a todos mis amigos de la UCAB!'),
+('2025-12-31 23:59:00', 'arturo@ucab.edu.ve', NULL, 'Feliz año nuevo 2026, que sea de éxitos para todos.'),
+('2026-01-07 07:00:00', 'informatica@ucab.edu.ve', NULL, 'Inicio de inscripciones administrativas período 2026-15.'),
+('2026-01-10 09:30:00', 'maria@ucab.edu.ve', 'Devs UCAB', '¿Listos para el Hackathon de enero? Vamos a armar equipos.'),
+('2026-01-12 11:15:00', 'arturo@ucab.edu.ve', NULL, 'Primera reunión del año del equipo de fútbol.'),
+('2026-01-13 13:45:00', 'miguel@ucab.edu.ve', NULL, 'Qué duro es madrugar de nuevo... necesito café.'),
+('2026-01-14 16:00:00', 'maria@ucab.edu.ve', NULL, 'Ruta de senderismo suave para empezar el año, Parque del Este.'),
+('2026-01-15 10:00:00', 'arturo@ucab.edu.ve', NULL, 'Buscando cupo en la electiva de Oratoria, ¿quién la recomienda?'),
+('2026-01-16 12:30:00', 'informatica@ucab.edu.ve', NULL, 'Recuerden validar su inscripción académica antes del viernes.'),
+('2026-01-18 19:00:00', 'miguel@ucab.edu.ve', 'Devs UCAB', 'Pregunta seria: ¿PostgreSQL o MongoDB para tesis de grado?'),
+('2026-01-20 08:15:00', 'arturo@ucab.edu.ve', NULL, 'Se me quedó el carnet, ¿dejan pasar con la constancia de estudios?'),
+('2026-01-21 14:00:00', 'informatica@ucab.edu.ve', NULL, 'Misa de inicio de curso mañana en la parroquia universitaria.'),
+('2026-01-22 17:00:00', 'maria@ucab.edu.ve', NULL, 'Vendiendo libros de Ingeniería del semestre pasado baratos.'),
+('2026-01-23 11:30:00', 'miguel@ucab.edu.ve', 'Devs UCAB', 'Stream benéfico de programación hoy a las 8pm, no falten.');
 
 -- Archivo Publicacion
 INSERT INTO Archivo_Publicacion (id_publicacion, correo_autor, nombre_archivo, formato_archivo, archivo) VALUES 
