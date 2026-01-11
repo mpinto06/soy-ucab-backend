@@ -2,6 +2,9 @@ package com.ucab.soy_ucab_backend.dto;
 
 import java.time.Instant;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class FeedPostDto {
     private String id;
     private AuthorDto author;
@@ -11,6 +14,7 @@ public class FeedPostDto {
     private int likes;
     private int comments;
     private boolean liked;
+    private List<String> interests;
 
     // Inner DTO for Author to structure the JSON nicely
     public static class AuthorDto {
@@ -36,7 +40,7 @@ public class FeedPostDto {
         public String getHeadline() { return headline; }
     }
 
-    public FeedPostDto(String id, AuthorDto author, String group, String content, Instant date, int likes, int comments, boolean liked) {
+    public FeedPostDto(String id, AuthorDto author, String group, String content, Instant date, int likes, int comments, boolean liked, List<String> interests) {
         this.id = id;
         this.author = author;
         this.group = group;
@@ -45,6 +49,7 @@ public class FeedPostDto {
         this.likes = likes;
         this.comments = comments;
         this.liked = liked;
+        this.interests = interests;
     }
 
     // Getters
@@ -56,4 +61,5 @@ public class FeedPostDto {
     public int getLikes() { return likes; }
     public int getComments() { return comments; }
     public boolean isLiked() { return liked; }
+    public List<String> getInterests() { return interests; }
 }

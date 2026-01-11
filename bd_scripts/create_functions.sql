@@ -620,6 +620,7 @@ RETURNS TABLE (
     likes INTEGER,
     comentarios INTEGER,
     mi_like BOOLEAN,
+    intereses VARCHAR,
     total_registros BIGINT
 ) 
 LANGUAGE plpgsql
@@ -653,6 +654,12 @@ BEGIN
             AND mg.correo_autor_pub = p.correo_autor
             AND mg.correo_miembro = p_correo_usuario
         ) AS mi_like,
+        (
+            SELECT STRING_AGG(ts.nombre_interes, ', ')::VARCHAR
+            FROM Trata_Sobre ts
+            WHERE ts.id_publicacion = p.id_publicacion
+            AND ts.correo_autor = p.correo_autor
+        ) AS intereses,
         COUNT(*) OVER() AS total_registros
     FROM 
         Publicacion p

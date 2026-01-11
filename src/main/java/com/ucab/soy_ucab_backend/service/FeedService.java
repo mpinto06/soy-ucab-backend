@@ -7,6 +7,9 @@ import com.ucab.soy_ucab_backend.repository.FeedRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -53,6 +56,11 @@ public class FeedService {
                 // I will add the prefix if it's missing in frontend logic, but here let's valid Base64 string.
             }
 
+            List<String> interests = new ArrayList<>();
+            if (p.getIntereses() != null && !p.getIntereses().isEmpty()) {
+                interests = Arrays.asList(p.getIntereses().split(", "));
+            }
+
             return new FeedPostDto(
                 p.getId_pub(),
                 new FeedPostDto.AuthorDto(
@@ -66,7 +74,8 @@ public class FeedService {
                 p.getFecha(),
                 p.getLikes(),
                 p.getComentarios(),
-                Boolean.TRUE.equals(p.getMi_like())
+                Boolean.TRUE.equals(p.getMi_like()),
+                interests
             );
         }).toList();
 
