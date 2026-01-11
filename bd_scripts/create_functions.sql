@@ -642,7 +642,6 @@ BEGIN
         )::VARCHAR AS autor_nombre,
         m.archivo_foto,
         m.encabezado_perfil,
-        
         p.id_grupo,
         p.texto_pub,
         p.fecha_hora,
