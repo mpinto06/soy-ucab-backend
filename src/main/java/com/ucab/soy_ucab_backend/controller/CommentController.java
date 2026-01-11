@@ -21,4 +21,12 @@ public class CommentController {
     ) {
         return commentService.getComments(postId, postAuthorId);
     }
+
+    @PostMapping
+    public void createComment(
+            @RequestParam String userId,
+            @RequestBody com.ucab.soy_ucab_backend.dto.CreateCommentDto dto
+    ) {
+        commentService.createComment(userId, dto);
+    }
 }

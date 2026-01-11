@@ -37,4 +37,20 @@ public class CommentService {
             );
         }).toList();
     }
+    public void createComment(String userId, com.ucab.soy_ucab_backend.dto.CreateCommentDto dto) {
+        com.ucab.soy_ucab_backend.model.Comment comment = new com.ucab.soy_ucab_backend.model.Comment();
+        
+        java.time.OffsetDateTime now = java.time.OffsetDateTime.now(java.time.ZoneOffset.UTC);
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        
+        // Use a formatted timestamp for the ID, similar to SQL inserts
+        comment.setIdComentario(now.format(formatter));
+        comment.setIdPublicacion(dto.getPostId());
+        comment.setCorreoAutorPub(dto.getPostAuthorId());
+        comment.setCorreoMiembro(userId);
+        comment.setTextoComentario(dto.getContent());
+        comment.setFechaHora(now);
+        
+        commentRepository.save(comment);
+    }
 }
