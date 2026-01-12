@@ -131,6 +131,14 @@ public class NetworkService {
                 if (friendEmails.contains(followerEmail)) {
                     follower.put("isFriend", true);
                 }
+
+                // Check if there is a pending request sent by the current user to this follower
+                String sqlCheckPending = "SELECT COUNT(*) FROM Es_Amigo WHERE correo_persona1 = ? AND correo_persona2 = ? AND estado = 'pendiente'";
+                Integer pendingCount = jdbcTemplate.queryForObject(sqlCheckPending, Integer.class, email,
+                        followerEmail);
+                if (pendingCount != null && pendingCount > 0) {
+                    follower.put("requestSent", true);
+                }
             }
 
             // Siguiendo (Following) - People the user follows

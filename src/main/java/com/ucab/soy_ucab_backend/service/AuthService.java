@@ -1,6 +1,5 @@
 package com.ucab.soy_ucab_backend.service;
 
-
 import com.ucab.soy_ucab_backend.dto.auth.*;
 import com.ucab.soy_ucab_backend.model.Miembro;
 import com.ucab.soy_ucab_backend.model.Organizacion;
@@ -84,16 +83,19 @@ public class AuthService {
         persona.setPassword(passwordEncoder.encode(request.getPassword()));
         persona.setFirstName(request.getFirstName());
         persona.setLastName(request.getLastName());
-        if(request.getBirthDate() != null) persona.setBirthDate(request.getBirthDate());
-        if(request.getGender() != null) persona.setGender(request.getGender());
-        
+        if (request.getBirthDate() != null)
+            persona.setBirthDate(request.getBirthDate());
+        if (request.getGender() != null)
+            persona.setGender(request.getGender());
+
         personaRepository.save(persona);
 
-        return new AuthResponseDto(persona.getEmail(), persona.getRole().name(), "Persona", persona, 0, 0L, null, null, null, null, persona.getLocation(), null);
+        return new AuthResponseDto(persona.getEmail(), persona.getRole().name(), "Persona", persona, 0, 0L, null, null,
+                null, null, persona.getLocation(), null);
     }
 
     public AuthResponseDto registerOrg(RegisterOrgRequestDto request) {
-         if (miembroRepository.existsById(request.getEmail())) {
+        if (miembroRepository.existsById(request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El correo electrónico ya está registrado");
         }
 
@@ -102,17 +104,18 @@ public class AuthService {
         org.setPassword(passwordEncoder.encode(request.getPassword()));
         org.setName(request.getOrgName() != null ? request.getOrgName() : request.getEmail());
         org.setDescription(request.getDescription());
-        
+
         organizacionRepository.save(org);
 
         return buildAuthResponse(org);
     }
 
     public AuthResponseDto buildAuthResponse(Miembro miembro) {
-        long followersCount = sigueRepository.countByFollowedEmail(miembro.getEmail()); 
+        long followersCount = sigueRepository.countByFollowedEmail(miembro.getEmail());
         Long friendsCount = null;
         String profileImage = null;
-        String memberType = miembro instanceof Persona ? "Persona" : (miembro instanceof Organizacion ? "Organizacion" : "Miembro");
+        String memberType = miembro instanceof Persona ? "Persona"
+                : (miembro instanceof Organizacion ? "Organizacion" : "Miembro");
 
         if (miembro.getArchivoFoto() != null && miembro.getFormatoFoto() != null) {
             String base64Info = java.util.Base64.getEncoder().encodeToString(miembro.getArchivoFoto());
@@ -147,12 +150,15 @@ public class AuthService {
         }
 
         // Fetch Groups
-        List<com.ucab.soy_ucab_backend.model.Grupo> dbGroups = grupoRepository.findGroupsByMemberEmail(miembro.getEmail());
+        List<com.ucab.soy_ucab_backend.model.Grupo> dbGroups = grupoRepository
+                .findGroupsByMemberEmail(miembro.getEmail());
         List<AuthResponseDto.GroupDto> groups = dbGroups.stream()
-            .map(g -> new AuthResponseDto.GroupDto(g.getNombre(), g.getDescripcion(), g.getTipo()))
-            .collect(java.util.stream.Collectors.toList());
+                .map(g -> new AuthResponseDto.GroupDto(g.getNombre(), g.getDescripcion(), g.getTipo()))
+                .collect(java.util.stream.Collectors.toList());
 
-        AuthResponseDto response = new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType, miembro, followersCount, friendsCount, profileImage, miembro.getEncabezadoPerfil(), academicPeriods, professionalPeriods, location, miembro.getInterests());
+        AuthResponseDto response = new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType,
+                miembro, followersCount, friendsCount, profileImage, miembro.getEncabezadoPerfil(), academicPeriods,
+                professionalPeriods, location, miembro.getInterests());
         response.setGroups(groups);
         return response;
     }

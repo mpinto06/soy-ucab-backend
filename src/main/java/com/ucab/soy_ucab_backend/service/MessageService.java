@@ -176,4 +176,13 @@ public class MessageService {
             }
         }
     }
+
+    public Map<String, Object> getFile(String messageId, String filename) {
+        String sql = "SELECT nombre_archivo, archivo, formato FROM Archivo_Mensaje WHERE id_mensaje = ? AND nombre_archivo = ?";
+        try {
+            return jdbcTemplate.queryForMap(sql, messageId, filename);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

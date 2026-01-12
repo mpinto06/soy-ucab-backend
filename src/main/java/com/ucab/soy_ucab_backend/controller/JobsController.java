@@ -152,4 +152,48 @@ public class JobsController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/close-offer")
+    public ResponseEntity<?> closeOffer(@RequestBody Map<String, String> payload) {
+        try {
+            jobService.closeJobOffer(
+                    payload.get("publisherEmail"),
+                    payload.get("jobTitle"));
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/applicant-cv")
+    public ResponseEntity<?> getApplicantCv(@RequestParam String publisherEmail, @RequestParam String jobTitle,
+            @RequestParam String applicantEmail) {
+        try {
+            Map<String, Object> fileData = jobService.getApplicantCv(publisherEmail, jobTitle, applicantEmail);
+            if (fileData != null && fileData.get("archivo_cv") != null) {
+                byte[] content = (byte[]) fileData.get("archivo_cv");
+                String filename = (String) fileData.get("nombre_archivo");
+                if (filename == null)
+                    filename = "documento.pdf";
+
+                String mimeType = "application/pdf";
+                if (filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg"))
+                    mimeType = "image/jpeg";
+                else if (filename.toLowerCase().endsWith(".png"))
+                    mimeType = "image/png";
+
+                return ResponseEntity.ok()
+                        .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, mimeType)
+                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                                "inline; filename=\"" + filename + "\"")
+                        .body(content);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

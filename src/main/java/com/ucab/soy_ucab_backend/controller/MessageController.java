@@ -55,4 +55,37 @@ public class MessageController {
             return ResponseEntity.internalServerError().body("Error sending message");
         }
     }
+
+    @GetMapping("/file")
+    public ResponseEntity<?> getFile(@RequestParam String id, @RequestParam String filename) {
+        try {
+            Map<String, Object> fileData = messageService.getFile(id, filename);
+            if (fileData != null) {
+                byte[] content = (byte[]) fileData.get("archivo");
+                String format = (String) fileData.get("formato");
+
+                String mimeType = "application/octet-stream";
+                // Simple mime type mapping
+                if ("jpg".equalsIgnoreCase(format) || "jpeg".equalsIgnoreCase(format))
+                    mimeType = "image/jpeg";
+                else if ("png".equalsIgnoreCase(format))
+                    mimeType = "image/png";
+                else if ("pdf".equalsIgnoreCase(format))
+                    mimeType = "application/pdf";
+                else if ("mp4".equalsIgnoreCase(format))
+                    mimeType = "video/mp4";
+
+                return ResponseEntity.ok()
+                        .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, mimeType)
+                        .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                                "inline; filename=\"" + filename + "\"")
+                        .body(content);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

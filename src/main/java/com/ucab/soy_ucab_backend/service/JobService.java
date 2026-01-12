@@ -244,4 +244,18 @@ public class JobService {
             }
         }
     }
+
+    public void closeJobOffer(String publisherEmail, String jobTitle) {
+        String sql = "UPDATE Oferta_Trabajo SET estado_oferta = 'cerrada' WHERE LOWER(correo_publicador) = LOWER(?) AND nombre_cargo = ?";
+        jdbcTemplate.update(sql, publisherEmail, jobTitle);
+    }
+
+    public Map<String, Object> getApplicantCv(String publisherEmail, String jobTitle, String applicantEmail) {
+        String sql = "SELECT archivo_cv, nombre_archivo FROM Aplica WHERE LOWER(correo_publicador) = LOWER(?) AND nombre_cargo = ? AND correo_aplicante = ?";
+        try {
+            return jdbcTemplate.queryForMap(sql, publisherEmail, jobTitle, applicantEmail);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

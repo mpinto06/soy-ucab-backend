@@ -26,7 +26,7 @@ public class AuthResponseDto {
         private String name;
         private String description;
         private String type;
-        
+
         public GroupDto(String name, String description, String type) {
             this.name = name;
             this.description = description;
@@ -34,7 +34,9 @@ public class AuthResponseDto {
         }
     }
 
-    public AuthResponseDto(String email, String role, String memberType, Object memberDetails, long followersCount, Long friendsCount, String profileImageBase64, String profileHeader, List<PeriodoEducativo> academicPeriods, List<PeriodoExperiencia> professionalPeriods, String location, List<String> interests) {
+    public AuthResponseDto(String email, String role, String memberType, Object memberDetails, long followersCount,
+            Long friendsCount, String profileImageBase64, String profileHeader, List<PeriodoEducativo> academicPeriods,
+            List<PeriodoExperiencia> professionalPeriods, String location, List<String> interests) {
         this.email = email;
         this.role = role;
         this.memberType = memberType;

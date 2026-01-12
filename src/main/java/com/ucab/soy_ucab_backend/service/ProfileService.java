@@ -74,19 +74,21 @@ public class ProfileService {
             currentEmail = request.newEmail();
         }
 
-        Miembro miembro = miembroRepository.findById(currentEmail).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-        
+        Miembro miembro = miembroRepository.findById(currentEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
         if (request.profileImageBase64() != null) {
             try {
                 String b64 = request.profileImageBase64();
-                if (b64.contains(",")) b64 = b64.split(",")[1];
+                if (b64.contains(","))
+                    b64 = b64.split(",")[1];
                 miembro.setArchivoFoto(java.util.Base64.getDecoder().decode(b64));
-                
+
                 // Set format and name if provided, otherwise default or derive
                 if (request.imageFormat() != null) {
-                     miembro.setFormatoFoto(request.imageFormat());
+                    miembro.setFormatoFoto(request.imageFormat());
                 } else {
-                     miembro.setFormatoFoto("png"); // Fallback
+                    miembro.setFormatoFoto("png"); // Fallback
                 }
 
                 if (request.imageName() != null) {
@@ -96,23 +98,29 @@ public class ProfileService {
                 // Ignore
             }
         }
-        if (request.profileHeader() != null) miembro.setEncabezadoPerfil(request.profileHeader());
-
+        if (request.profileHeader() != null)
+            miembro.setEncabezadoPerfil(request.profileHeader());
 
         if (miembro instanceof Persona) {
-             Persona p = (Persona) miembro;
-             if (request.firstName() != null) p.setFirstName(request.firstName());
-             if (request.lastName() != null) p.setLastName(request.lastName());
-             if (request.gender() != null) p.setGender(request.gender());
-             if (request.location() != null) p.setLocation(request.location());
-             personaRepository.save(p);
+            Persona p = (Persona) miembro;
+            if (request.firstName() != null)
+                p.setFirstName(request.firstName());
+            if (request.lastName() != null)
+                p.setLastName(request.lastName());
+            if (request.gender() != null)
+                p.setGender(request.gender());
+            if (request.location() != null)
+                p.setLocation(request.location());
+            personaRepository.save(p);
         } else if (miembro instanceof Organizacion) {
             Organizacion o = (Organizacion) miembro;
-            if (request.firstName() != null) o.setName(request.firstName());
-            if (request.description() != null) o.setDescription(request.description());
+            if (request.firstName() != null)
+                o.setName(request.firstName());
+            if (request.description() != null)
+                o.setDescription(request.description());
             organizacionRepository.save(o);
         } else {
-             miembroRepository.save(miembro);
+            miembroRepository.save(miembro);
         }
 
         return authService.buildAuthResponse(miembro);
@@ -124,8 +132,10 @@ public class ProfileService {
             interesRepository.save(new Interes(interest));
         }
 
-        Miembro miembro = miembroRepository.findById(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-        if (miembro.getInterests() == null) miembro.setInterests(new java.util.ArrayList<>());
+        Miembro miembro = miembroRepository.findById(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        if (miembro.getInterests() == null)
+            miembro.setInterests(new java.util.ArrayList<>());
         if (!miembro.getInterests().contains(interest)) {
             miembro.getInterests().add(interest);
             miembroRepository.save(miembro);
@@ -134,7 +144,8 @@ public class ProfileService {
     }
 
     public AuthResponseDto removeInterest(String email, String interest) {
-        Miembro miembro = miembroRepository.findById(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        Miembro miembro = miembroRepository.findById(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         if (miembro.getInterests() != null) {
             miembro.getInterests().remove(interest);
             miembroRepository.save(miembro);
@@ -162,7 +173,7 @@ public class ProfileService {
 
     public AuthResponseDto savePeriod(String email, PeriodDto periodDto) {
         if (!miembroRepository.existsById(email)) {
-             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado");
         }
 
         // Ensure all skills exist
@@ -176,7 +187,8 @@ public class ProfileService {
 
         String newId = periodDto.id();
         if (newId == null) {
-            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                    .ofPattern("yyyy-MM-dd HH:mm:ss");
             newId = java.time.LocalDateTime.now().format(formatter);
         }
 
@@ -190,18 +202,21 @@ public class ProfileService {
             p.setSkills(periodDto.skills());
             // Academic specific
             String vidCarrera = periodDto.degreeId();
-            if (vidCarrera != null && vidCarrera.isBlank()) vidCarrera = null;
+            if (vidCarrera != null && vidCarrera.isBlank())
+                vidCarrera = null;
             p.setIdCarrera(vidCarrera);
 
             String vNombreEstudio = periodDto.title();
-            if (vNombreEstudio != null && vNombreEstudio.isBlank()) vNombreEstudio = null;
+            if (vNombreEstudio != null && vNombreEstudio.isBlank())
+                vNombreEstudio = null;
             p.setNombreEstudio(vNombreEstudio);
-            
+
             // File Handling
             if (periodDto.fileBase64() != null && !periodDto.fileBase64().isBlank()) {
                 try {
                     String b64 = periodDto.fileBase64();
-                    if (b64.contains(",")) b64 = b64.split(",")[1];
+                    if (b64.contains(","))
+                        b64 = b64.split(",")[1];
                     p.setArchivoCertificado(java.util.Base64.getDecoder().decode(b64));
                     p.setFormatoArchivo(periodDto.fileFormat());
                 } catch (Exception e) {
@@ -227,7 +242,8 @@ public class ProfileService {
             if (periodDto.fileBase64() != null && !periodDto.fileBase64().isBlank()) {
                 try {
                     String b64 = periodDto.fileBase64();
-                    if (b64.contains(",")) b64 = b64.split(",")[1];
+                    if (b64.contains(","))
+                        b64 = b64.split(",")[1];
                     p.setArchivoCarta(java.util.Base64.getDecoder().decode(b64));
                     p.setFormatoArchivo(periodDto.fileFormat());
                 } catch (Exception e) {
@@ -237,7 +253,7 @@ public class ProfileService {
 
             periodoExperienciaRepository.save(p);
         } else {
-             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de periodo inválido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de periodo inválido");
         }
 
         return authService.buildAuthResponse(miembroRepository.findById(email).orElseThrow());
@@ -246,7 +262,8 @@ public class ProfileService {
     @org.springframework.transaction.annotation.Transactional
     public AuthResponseDto deletePeriod(String email, String periodId, String type) {
         if ("academic".equalsIgnoreCase(type)) {
-            PeriodoEducativo p = periodoEducativoRepository.findByCorreoPersonaAndIdPeriodo(email, periodId).orElse(null);
+            PeriodoEducativo p = periodoEducativoRepository.findByCorreoPersonaAndIdPeriodo(email, periodId)
+                    .orElse(null);
             if (p != null) {
                 if (p.getSkills() != null) {
                     p.getSkills().clear();
@@ -256,19 +273,22 @@ public class ProfileService {
                 periodoEducativoRepository.delete(p);
             }
         } else if ("professional".equalsIgnoreCase(type)) {
-             PeriodoExperiencia p = periodoExperienciaRepository.findByCorreoPersonaAndIdPeriodo(email, periodId).orElse(null);
-             if (p != null) {
-                 if (p.getSkills() != null) {
-                     p.getSkills().clear();
-                     periodoExperienciaRepository.save(p);
-                     periodoExperienciaRepository.flush();
-                 }
-                 periodoExperienciaRepository.delete(p);
+            PeriodoExperiencia p = periodoExperienciaRepository.findByCorreoPersonaAndIdPeriodo(email, periodId)
+                    .orElse(null);
+            if (p != null) {
+                if (p.getSkills() != null) {
+                    p.getSkills().clear();
+                    periodoExperienciaRepository.save(p);
+                    periodoExperienciaRepository.flush();
+                }
+                periodoExperienciaRepository.delete(p);
             }
         }
-        
-        return authService.buildAuthResponse(miembroRepository.findById(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
+
+        return authService.buildAuthResponse(miembroRepository.findById(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
     }
+
     public AuthResponseDto getUserProfile(String userId) {
         Miembro miembro = miembroRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));

@@ -57,6 +57,7 @@ public class OfertasAplicadasService {
                        CAST(ot.tipo_cargo AS text) as tipo_cargo, CAST(ot.modalidad AS text) as modalidad,
                        ot.ubicacion, ot.descripcion_cargo, TO_CHAR(ot.fecha_publicacion, 'DD Mon YYYY') as fecha_publicacion,
                        ot.correo_publicador as publicador_email,
+                       CAST(ot.estado_oferta AS text) as estado,
                        m.archivo_foto, m.formato_foto
                 FROM Guarda g
                 JOIN Oferta_Trabajo ot ON g.correo_publicador = ot.correo_publicador AND g.nombre_cargo = ot.nombre_cargo
