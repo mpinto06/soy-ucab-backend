@@ -3,10 +3,15 @@ package com.ucab.soy_ucab_backend.service;
 import com.ucab.soy_ucab_backend.dto.auth.*;
 import com.ucab.soy_ucab_backend.model.Miembro;
 import com.ucab.soy_ucab_backend.model.Organizacion;
+import com.ucab.soy_ucab_backend.model.DependenciaUCAB;
+import com.ucab.soy_ucab_backend.model.OrganizacionAsociada;
+import com.ucab.soy_ucab_backend.model.TipoEntidad;
 
 import com.ucab.soy_ucab_backend.model.Persona;
 import com.ucab.soy_ucab_backend.model.PeriodoEducativo;
 import com.ucab.soy_ucab_backend.model.PeriodoExperiencia;
+import com.ucab.soy_ucab_backend.model.Escuela;
+import com.ucab.soy_ucab_backend.model.Facultad;
 import com.ucab.soy_ucab_backend.repository.MiembroRepository;
 import com.ucab.soy_ucab_backend.repository.OrganizacionRepository;
 import com.ucab.soy_ucab_backend.repository.PersonaRepository;
@@ -57,6 +62,9 @@ public class AuthService {
     private com.ucab.soy_ucab_backend.repository.GrupoRepository grupoRepository;
 
     @Autowired
+    private com.ucab.soy_ucab_backend.repository.CatalogoOficialRepository catalogoOficialRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public AuthResponseDto login(LoginRequestDto request) {
@@ -82,7 +90,9 @@ public class AuthService {
         persona.setEmail(request.getEmail());
         persona.setPassword(passwordEncoder.encode(request.getPassword()));
         persona.setFirstName(request.getFirstName());
+        persona.setSecondName(request.getSecondName());
         persona.setLastName(request.getLastName());
+        persona.setSecondLastName(request.getSecondLastName());
         if (request.getBirthDate() != null)
             persona.setBirthDate(request.getBirthDate());
         if (request.getGender() != null)
@@ -99,7 +109,65 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El correo electrónico ya está registrado");
         }
 
-        Organizacion org = new Organizacion();
+        Organizacion org;
+        
+        String type = request.getOrganizationType();
+        if ("ucab".equalsIgnoreCase(type)) {
+            DependenciaUCAB dep = new DependenciaUCAB();
+            if (request.getUcabEntityType() != null) {
+                try {
+                    TipoEntidad tipo = TipoEntidad.valueOf(request.getUcabEntityType().toLowerCase());
+                    
+                    if (tipo == TipoEntidad.escuela) {
+                        Escuela escuela = new Escuela();
+                        escuela.setTipoEntidad(tipo);
+                        
+                        // Validar y vincular Facultad
+                        // Usar el nombre de la organizacion (que debe coincidir con el catalogo si es escuela)
+                        String schoolName = request.getOrgName();
+                        com.ucab.soy_ucab_backend.model.CatalogoOficial catEntry = catalogoOficialRepository.findByNombreEscuela(schoolName);
+                        
+                        if (catEntry == null) {
+                            // Si no esta en el catalogo, quiza el nombre no coincide exacto, pero asumiremos que el frontend envia el nombre correcto del catalogo
+                             // O podriamos permitir registro sin validacion estricta si el catalogo falla? 
+                             // El requerimiento dice: "search for its matching faculty... from Catalogo_Oficial_UCAB"
+                             // Si no se encuentra en el catalogo, es un error de datos o input.
+                             // Asumamos que debe existir.
+                             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La escuela no se encuentra en el catálgo oficial.");
+                        }
+
+                        String facultyName = catEntry.getNombreFacultad();
+                        Optional<Organizacion> facultyOrgOpt = organizacionRepository.findByName(facultyName);
+                        
+                        if (facultyOrgOpt.isEmpty()) {
+                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La facultad asociada (" + facultyName + ") no está registrada.");
+                        }
+                        
+                        escuela.setCorreoFacultad(facultyOrgOpt.get().getEmail());
+                        org = escuela;
+                    } else if (tipo == TipoEntidad.facultad) {
+                        Facultad facultad = new Facultad();
+                        facultad.setTipoEntidad(tipo);
+                        org = facultad;
+                    } else {
+                        dep.setTipoEntidad(tipo);
+                        org = dep;
+                    }
+                } catch (IllegalArgumentException e) {
+                     dep.setTipoEntidad(TipoEntidad.libre);
+                     org = dep;
+                }
+            } else {
+                org = dep;
+            }
+        } else if ("external".equalsIgnoreCase(type)) {
+             OrganizacionAsociada assoc = new OrganizacionAsociada();
+             assoc.setRif(request.getRif());
+             org = assoc;
+        } else {
+             org = new Organizacion();
+        }
+
         org.setEmail(request.getEmail());
         org.setPassword(passwordEncoder.encode(request.getPassword()));
         org.setName(request.getOrgName() != null ? request.getOrgName() : request.getEmail());

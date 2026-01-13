@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrganizacionRepository extends JpaRepository<Organizacion, String> {
+    java.util.Optional<Organizacion> findByName(String name);
 }

@@ -7,7 +7,7 @@ public class RegisterOrgRequestDto {
     private String email;
     private String password;
     private String orgName;
-    private String orgType;
+    private String organizationType;
     
     // UCAB
     private String ucabEntityType; // escuela, facultad, etc

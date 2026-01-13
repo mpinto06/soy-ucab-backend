@@ -105,8 +105,12 @@ public class ProfileService {
             Persona p = (Persona) miembro;
             if (request.firstName() != null)
                 p.setFirstName(request.firstName());
+            if (request.secondName() != null)
+                p.setSecondName(request.secondName());
             if (request.lastName() != null)
                 p.setLastName(request.lastName());
+            if (request.secondLastName() != null)
+                p.setSecondLastName(request.secondLastName());
             if (request.gender() != null)
                 p.setGender(request.gender());
             if (request.location() != null)

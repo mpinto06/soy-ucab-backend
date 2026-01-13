@@ -6,7 +6,9 @@ import java.time.LocalDate;
 public record UpdateUserRequestDto(
     String email,
     String firstName,
+    String secondName,
     String lastName,
+    String secondLastName,
     String gender,
     String location,
     String profileHeader,

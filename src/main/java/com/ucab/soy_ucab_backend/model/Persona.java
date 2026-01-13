@@ -17,9 +17,15 @@ import java.time.LocalDate;
 public class Persona extends Miembro {
     @Column(name = "primer_nombre")
     private String firstName;
+    
+    @Column(name = "segundo_nombre")
+    private String secondName;
 
     @Column(name = "primer_apellido")
     private String lastName;
+
+    @Column(name = "segundo_apellido")
+    private String secondLastName;
     
     @Column(name = "fecha_nacimiento")
     private LocalDate birthDate;

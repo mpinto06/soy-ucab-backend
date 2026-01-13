@@ -33,4 +33,6 @@ public interface CatalogoOficialRepository extends JpaRepository<CatalogoOficial
             )
             """, nativeQuery = true)
     List<String> findUnregisteredFaculties();
+
+    CatalogoOficial findByNombreEscuela(String nombreEscuela);
 }
