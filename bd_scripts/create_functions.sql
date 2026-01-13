@@ -760,7 +760,7 @@ BEGIN
     END IF;
 
     -- Eliminar temporalmente la restricción de orden en Es_Amigo
-    ALTER TABLE Es_Amigo DROP CONSTRAINT chk_orden_correos;
+    ALTER TABLE Es_Amigo DROP CONSTRAINT IF EXISTS chk_orden_correos;
 
     -- Actualizar el correo principal
     UPDATE Miembro 
