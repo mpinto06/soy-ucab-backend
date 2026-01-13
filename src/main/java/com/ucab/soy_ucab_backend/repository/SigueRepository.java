@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SigueRepository extends JpaRepository<Sigue, SigueId> {
     long countByFollowedEmail(String followedEmail);
+
+    boolean existsByFollowerEmailAndFollowedEmail(String followerEmail, String followedEmail);
 }

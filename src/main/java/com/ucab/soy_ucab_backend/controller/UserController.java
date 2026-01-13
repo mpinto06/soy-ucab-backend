@@ -64,8 +64,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthResponseDto> getUserProfile(@PathVariable String id) {
+    public ResponseEntity<AuthResponseDto> getUserProfile(@PathVariable String id,
+            @RequestParam(required = false) String requesterId) {
         // The id here corresponds to the email since that's the PK
-        return ResponseEntity.ok(profileService.getUserProfile(id));
+        return ResponseEntity.ok(profileService.getUserProfile(id, requesterId));
     }
 }

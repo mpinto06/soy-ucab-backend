@@ -110,6 +110,16 @@ public class AuthService {
         return buildAuthResponse(org);
     }
 
+    public AuthResponseDto buildAuthResponse(Miembro miembro, String requesterEmail) {
+        AuthResponseDto dto = buildAuthResponse(miembro);
+        if (requesterEmail != null && !requesterEmail.equals(miembro.getEmail())) {
+            boolean isFollowing = sigueRepository.existsByFollowerEmailAndFollowedEmail(requesterEmail,
+                    miembro.getEmail());
+            dto.setFollowing(isFollowing);
+        }
+        return dto;
+    }
+
     public AuthResponseDto buildAuthResponse(Miembro miembro) {
         long followersCount = sigueRepository.countByFollowedEmail(miembro.getEmail());
         Long friendsCount = null;

@@ -13,6 +13,8 @@ public class AuthResponseDto {
     private Object memberDetails;
     private long followersCount;
     private Long friendsCount; // Optional for non-Persona
+    @com.fasterxml.jackson.annotation.JsonProperty("isFollowing")
+    private boolean isFollowing;
     private String profileImageBase64;
     private String profileHeader;
     private List<PeriodoEducativo> academicPeriods;
