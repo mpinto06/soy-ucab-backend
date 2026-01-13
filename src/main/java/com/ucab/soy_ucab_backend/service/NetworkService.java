@@ -294,12 +294,15 @@ public class NetworkService {
                     initials += p1.charAt(0);
                 if (a1 != null && !a1.isEmpty())
                     initials += a1.charAt(0);
+                member.put("isOrg", false);
             } else if (orgName != null) { // Es organizacion
                 fullName = orgName;
                 if (!orgName.isEmpty())
                     initials += orgName.substring(0, 1);
+                member.put("isOrg", true);
             } else {
                 fullName = "Usuario";
+                member.put("isOrg", false);
             }
             member.put("name", fullName);
             member.put("initials", initials.toUpperCase());
