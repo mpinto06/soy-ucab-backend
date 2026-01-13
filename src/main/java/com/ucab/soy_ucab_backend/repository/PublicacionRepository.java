@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PublicacionRepository extends JpaRepository<Publicacion, PublicacionId> {
+    java.util.List<Publicacion> findByIdGrupoOrderByFechaHoraDesc(String idGrupo);
 }

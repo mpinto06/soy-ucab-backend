@@ -110,39 +110,45 @@ public class AuthService {
         }
 
         Organizacion org;
-        
+
         String type = request.getOrganizationType();
         if ("ucab".equalsIgnoreCase(type)) {
             DependenciaUCAB dep = new DependenciaUCAB();
             if (request.getUcabEntityType() != null) {
                 try {
                     TipoEntidad tipo = TipoEntidad.valueOf(request.getUcabEntityType().toLowerCase());
-                    
+
                     if (tipo == TipoEntidad.escuela) {
                         Escuela escuela = new Escuela();
                         escuela.setTipoEntidad(tipo);
-                        
+
                         // Validar y vincular Facultad
-                        // Usar el nombre de la organizacion (que debe coincidir con el catalogo si es escuela)
+                        // Usar el nombre de la organizacion (que debe coincidir con el catalogo si es
+                        // escuela)
                         String schoolName = request.getOrgName();
-                        com.ucab.soy_ucab_backend.model.CatalogoOficial catEntry = catalogoOficialRepository.findByNombreEscuela(schoolName);
-                        
+                        com.ucab.soy_ucab_backend.model.CatalogoOficial catEntry = catalogoOficialRepository
+                                .findByNombreEscuela(schoolName);
+
                         if (catEntry == null) {
-                            // Si no esta en el catalogo, quiza el nombre no coincide exacto, pero asumiremos que el frontend envia el nombre correcto del catalogo
-                             // O podriamos permitir registro sin validacion estricta si el catalogo falla? 
-                             // El requerimiento dice: "search for its matching faculty... from Catalogo_Oficial_UCAB"
-                             // Si no se encuentra en el catalogo, es un error de datos o input.
-                             // Asumamos que debe existir.
-                             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La escuela no se encuentra en el catálgo oficial.");
+                            // Si no esta en el catalogo, quiza el nombre no coincide exacto, pero
+                            // asumiremos que el frontend envia el nombre correcto del catalogo
+                            // O podriamos permitir registro sin validacion estricta si el catalogo falla?
+                            // El requerimiento dice: "search for its matching faculty... from
+                            // Catalogo_Oficial_UCAB"
+                            // Si no se encuentra en el catalogo, es un error de datos o input.
+                            // Asumamos que debe existir.
+                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                    "La escuela no se encuentra en el catálgo oficial.");
                         }
 
                         String facultyName = catEntry.getNombreFacultad();
                         Optional<Organizacion> facultyOrgOpt = organizacionRepository.findByName(facultyName);
-                        
+
                         if (facultyOrgOpt.isEmpty()) {
-                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La facultad asociada (" + facultyName + ") no está registrada.");
+                            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                    "La facultad asociada (" + facultyName + ") no está registrada.");
                         }
-                        
+
                         escuela.setCorreoFacultad(facultyOrgOpt.get().getEmail());
                         org = escuela;
                     } else if (tipo == TipoEntidad.facultad) {
@@ -154,18 +160,18 @@ public class AuthService {
                         org = dep;
                     }
                 } catch (IllegalArgumentException e) {
-                     dep.setTipoEntidad(TipoEntidad.libre);
-                     org = dep;
+                    dep.setTipoEntidad(TipoEntidad.libre);
+                    org = dep;
                 }
             } else {
                 org = dep;
             }
         } else if ("external".equalsIgnoreCase(type)) {
-             OrganizacionAsociada assoc = new OrganizacionAsociada();
-             assoc.setRif(request.getRif());
-             org = assoc;
+            OrganizacionAsociada assoc = new OrganizacionAsociada();
+            assoc.setRif(request.getRif());
+            org = assoc;
         } else {
-             org = new Organizacion();
+            org = new Organizacion();
         }
 
         org.setEmail(request.getEmail());
@@ -229,9 +235,9 @@ public class AuthService {
 
         // Fetch Groups
         List<com.ucab.soy_ucab_backend.model.Grupo> dbGroups = grupoRepository
-                .findGroupsByMemberEmail(miembro.getEmail());
+                .findByCreador_Email(miembro.getEmail());
         List<AuthResponseDto.GroupDto> groups = dbGroups.stream()
-                .map(g -> new AuthResponseDto.GroupDto(g.getNombre(), g.getDescripcion(), g.getTipo()))
+                .map(g -> new AuthResponseDto.GroupDto(g.getNombreGrupo(), g.getDescripcion(), g.getTipoGrupo().name()))
                 .collect(java.util.stream.Collectors.toList());
 
         AuthResponseDto response = new AuthResponseDto(miembro.getEmail(), miembro.getRole().name(), memberType,

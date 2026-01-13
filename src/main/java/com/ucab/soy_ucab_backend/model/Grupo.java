@@ -6,35 +6,65 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "Grupo")
 public class Grupo {
-    @Id
-    @Column(name = "nombre_grupo", length = 255)
-    private String nombre;
 
-    @Column(name = "descripcion", length = 255)
+    @Id
+    @Column(name = "nombre_grupo")
+    private String nombreGrupo;
+
+    @Column(name = "descripcion")
     private String descripcion;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_grupo")
-    private String tipo; // Enum type as String
+    private TipoGrupo tipoGrupo;
 
     @Column(name = "fecha_creacion")
     private LocalDate fechaCreacion;
 
-    @Column(name = "correo_creador", length = 255)
-    private String correoCreador;
+    @ManyToOne
+    @JoinColumn(name = "correo_creador", nullable = false)
+    private Miembro creador;
 
-    // Getters and Setters
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public Grupo() {
+    }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public String getNombreGrupo() {
+        return nombreGrupo;
+    }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public void setNombreGrupo(String nombreGrupo) {
+        this.nombreGrupo = nombreGrupo;
+    }
 
-    public LocalDate getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDate fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 
-    public String getCorreoCreador() { return correoCreador; }
-    public void setCorreoCreador(String correoCreador) { this.correoCreador = correoCreador; }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public TipoGrupo getTipoGrupo() {
+        return tipoGrupo;
+    }
+
+    public void setTipoGrupo(TipoGrupo tipoGrupo) {
+        this.tipoGrupo = tipoGrupo;
+    }
+
+    public LocalDate getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDate fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Miembro getCreador() {
+        return creador;
+    }
+
+    public void setCreador(Miembro creador) {
+        this.creador = creador;
+    }
 }
