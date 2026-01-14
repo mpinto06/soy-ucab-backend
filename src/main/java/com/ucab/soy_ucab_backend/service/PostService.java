@@ -22,9 +22,11 @@ public class PostService {
     private EntityManager entityManager;
 
     private final PublicacionRepository publicacionRepository;
+    private final com.ucab.soy_ucab_backend.repository.InteresRepository interesRepository;
 
-    public PostService(PublicacionRepository publicacionRepository) {
+    public PostService(PublicacionRepository publicacionRepository, com.ucab.soy_ucab_backend.repository.InteresRepository interesRepository) {
         this.publicacionRepository = publicacionRepository;
+        this.interesRepository = interesRepository;
     }
 
     @Transactional
@@ -108,12 +110,18 @@ public class PostService {
             for (String interestName : dto.getInterests()) {
                 if (interestName == null || interestName.trim().isEmpty()) continue;
                 
+                // Ensure Interes exists before linking
+                if (!interesRepository.existsById(interestName)) {
+                    Interes newInteres = new Interes();
+                    newInteres.setNombreInteres(interestName);
+                    interesRepository.save(newInteres);
+                    entityManager.flush(); // Ensure it's available for foreign key check
+                }
+                
                 TrataSobre trataSobre = new TrataSobre();
                 TrataSobreId tsId = new TrataSobreId(post.getIdPublicacion(), userId, interestName);
                 trataSobre.setId(tsId);
                 trataSobre.setPublicacion(post);
-                // We assume the Interes entity exists. We can set the ID directly or reference it.
-                // Setting ID is enough for persist if we don't need to fetch the Interes entity field.
                 
                 entityManager.persist(trataSobre);
             }
